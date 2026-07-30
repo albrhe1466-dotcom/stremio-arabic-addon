@@ -1,6 +1,3 @@
-Here is the complete, fixed `server.js` file. It dynamically uses the correct cloud host URL (Render or local) so Stremio can successfully fetch the subtitle file from the internet instead of failing on `127.0.0.1`.
-
-```javascript
 const express = require('express');
 const cors = require('cors');
 const app = express();
