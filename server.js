@@ -1,3 +1,6 @@
+Here is the complete, fixed `server.js` file. It dynamically uses the correct cloud host URL (Render or local) so Stremio can successfully fetch the subtitle file from the internet instead of failing on `127.0.0.1`.
+
+```javascript
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -39,9 +42,7 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
     let rawId = req.params.id;
     if (rawId.endsWith('.json')) rawId = rawId.slice(0, -5);
 
-    // CRITICAL FIX: Clean the ID by stripping Stremio's appended filenames, query params, and video sizes
     let cleanId = rawId.split('/filename=')[0].split('&')[0].split('?')[0];
-
     const cacheKey = `${type}-${cleanId.replace(/[/\\?%*:|"<>\s]/g, '_')}`;
 
     if (!srtCache.has(cacheKey)) {
@@ -70,7 +71,6 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
                 if (generatedText) {
                     generatedText = generatedText.replace(/```srt/g, '').replace(/```/g, '').trim();
                     
-                    // Validate that the output contains proper SRT timestamps before caching
                     if (generatedText.includes('-->')) {
                         srtCache.set(cacheKey, generatedText);
                         console.log(`[Gemini AI] Successfully generated and cached valid subtitles for ${cleanId}!`);
@@ -88,7 +88,9 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
         })();
     }
 
-    const localSrtUrl = `http://127.0.0.1:${PORT}/srt-file/${encodeURIComponent(cacheKey)}`;
+    const host = req.get('host');
+    const protocol = req.protocol;
+    const localSrtUrl = `${protocol}://${host}/srt-file/${encodeURIComponent(cacheKey)}`;
 
     res.json({
         subtitles: [
@@ -101,6 +103,7 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
         ]
     });
 });
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`==================================================`);
     console.log(`🚀 Universal Gemini Server running at: 0.0.0.0:${PORT}`);
