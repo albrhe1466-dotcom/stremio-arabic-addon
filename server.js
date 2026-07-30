@@ -3,7 +3,6 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 7000;
 
-// 1. BULLETPROOF CORS FOR STREMIO CLOUD ADDONS
 app.use(cors());
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,7 +16,6 @@ app.use(express.static(__dirname));
 
 const srtCache = new Map();
 
-// 2. THE ADDON MANIFEST OBJECT
 const addonManifest = {
     id: 'org.arabicfushasubtitle.gemini.v18',
     version: '1.8.0',
@@ -26,20 +24,13 @@ const addonManifest = {
     types: ['movie', 'series', 'anime', 'tv', 'other'],
     resources: ['subtitles'],
     catalogs: [],
-    idPrefixes: ['tt', 'kitsu', 'anilist'] // Helps Stremio recognize supported content
+    idPrefixes: ['tt', 'kitsu', 'anilist']
 };
 
-// 3. FALLBACK ROOT MANIFEST (Prevents Stremio crashes if URL is malformed)
-app.get('/manifest.json', (req, res) => {
-    res.json(addonManifest);
-});
+app.get('/manifest.json', (req, res) => { res.json(addonManifest); });
 
-// 4. DYNAMIC MANIFEST (Used by your HTML interface and manual links)
-app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => {
-    res.json(addonManifest);
-});
+app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => { res.json(addonManifest); });
 
-// 5. SUBTITLE SRT FILE SERVING
 app.get('/srt-file/:cacheKey', (req, res) => {
     const cacheKey = req.params.cacheKey;
     let content = srtCache.get(cacheKey);
@@ -52,13 +43,11 @@ app.get('/srt-file/:cacheKey', (req, res) => {
     res.send(content);
 });
 
-// 6. MAIN TRANSLATION LOGIC
 app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => {
     const { subKey, model, type } = req.params;
     let rawId = req.params.id;
     if (rawId.endsWith('.json')) rawId = rawId.slice(0, -5);
 
-    // CRITICAL: Clean the Stremio URL junk from the ID
     let cleanId = rawId.split('/filename=')[0].split('&')[0].split('?')[0];
     const cacheKey = `${type}-${cleanId.replace(/[/\\?%*:|"<>\s]/g, '_')}`;
 
@@ -67,7 +56,6 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
 
         (async () => {
             try {
-                console.log(`[Gemini AI] Cleaned ID. Original: ${rawId} ---> Cleaned: ${cleanId}`);
                 console.log(`[Gemini AI] Starting translation for [${type}] ID: ${cleanId} using model: ${model}...`);
                 
                 const prompt = `Generate a complete, professional cinematic Arabic Fusha (Standard Arabic) subtitle file in valid SRT format for ${type} (ID: ${cleanId}). 
@@ -87,43 +75,26 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
 
                 if (generatedText) {
                     generatedText = generatedText.replace(/```srt/g, '').replace(/```/g, '').trim();
-                    
                     if (generatedText.includes('-->')) {
                         srtCache.set(cacheKey, generatedText);
-                        console.log(`[Gemini AI] Successfully generated and cached valid subtitles for ${cleanId}!`);
+                        console.log(`[Gemini AI] Successfully generated and cached valid subtitles!`);
                     } else {
-                        console.error('[Gemini AI] Response missing valid SRT timestamps. Falling back.');
                         srtCache.set(cacheKey, `1\n00:00:01,000 --> 00:00:06,000\n⚠️ خطأ: لم يتم إرجاع تنسيق ترجمة صحيح من النموذج.`);
                     }
-                } else {
-                    console.error('[Gemini AI] Empty response structure:', JSON.stringify(data));
                 }
             } catch (err) {
-                console.error('[Gemini AI] Generation error:', err);
                 srtCache.set(cacheKey, `1\n00:00:01,000 --> 00:00:06,000\n❌ خطأ في الاتصال بـ Gemini AI.`);
             }
         })();
     }
 
-    // 7. FIX HTTP/HTTPS RENDER PROXY ISSUE
     const host = req.get('host');
     const protocol = req.headers['x-forwarded-proto'] || req.protocol; 
     const localSrtUrl = `${protocol}://${host}/srt-file/${encodeURIComponent(cacheKey)}`;
 
-    res.json({
-        subtitles: [
-            {
-                id: `${cleanId}-arabic-fusha-ai`,
-                url: localSrtUrl,
-                lang: 'ara',
-                name: 'العربية الفصحى (Gemini AI)'
-            }
-        ]
-    });
+    res.json({ subtitles: [{ id: `${cleanId}-arabic-fusha-ai`, url: localSrtUrl, lang: 'ara', name: 'العربية الفصحى (Gemini AI)' }] });
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`==================================================`);
     console.log(`🚀 Universal Gemini Server running at: 0.0.0.0:${PORT}`);
-    console.log(`==================================================`);
 });
