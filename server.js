@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 7000;
 
+// 1. BULLETPROOF CORS FOR STREMIO CLOUD ADDONS
 app.use(cors());
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,21 +17,31 @@ app.use(express.static(__dirname));
 
 const srtCache = new Map();
 
+// 2. THE ADDON MANIFEST OBJECT (WITH LOGO & BACKGROUND ADDED)
 const addonManifest = {
     id: 'org.arabicfushasubtitle.gemini.v18',
     version: '1.8.0',
     name: 'Arabic Fusha Subtitle (AI)',
     description: 'Cinematic Arabic Fusha subtitles for Anime, Movies, and Series powered by Google Gemini AI',
+    logo: 'https://i.imgur.com/h7eKUdF.png',
+    background: 'https://i.imgur.com/KNLQb24.jpeg',
     types: ['movie', 'series', 'anime', 'tv', 'other'],
     resources: ['subtitles'],
     catalogs: [],
     idPrefixes: ['tt', 'kitsu', 'anilist']
 };
 
-app.get('/manifest.json', (req, res) => { res.json(addonManifest); });
+// 3. FALLBACK ROOT MANIFEST
+app.get('/manifest.json', (req, res) => {
+    res.json(addonManifest);
+});
 
-app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => { res.json(addonManifest); });
+// 4. DYNAMIC MANIFEST
+app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => {
+    res.json(addonManifest);
+});
 
+// 5. SUBTITLE SRT FILE SERVING
 app.get('/srt-file/:cacheKey', (req, res) => {
     const cacheKey = req.params.cacheKey;
     let content = srtCache.get(cacheKey);
@@ -43,6 +54,7 @@ app.get('/srt-file/:cacheKey', (req, res) => {
     res.send(content);
 });
 
+// 6. MAIN TRANSLATION LOGIC
 app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => {
     const { subKey, model, type } = req.params;
     let rawId = req.params.id;
@@ -96,5 +108,7 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
 });
 
 app.listen(PORT, '0.0.0.0', () => {
+    console.log(`==================================================`);
     console.log(`🚀 Universal Gemini Server running at: 0.0.0.0:${PORT}`);
+    console.log(`==================================================`);
 });
