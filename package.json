@@ -1,7 +1,7 @@
 {
-  "name": "stremio-arabic-fusha-addon",
-  "version": "1.0.0",
-  "description": "Arabic Fusha Subtitle Stremio Addon",
+  "name": "arabic-al-fusha-subtitle",
+  "version": "1.7.0",
+  "description": "Arabic Fusha Subtitles Addon for Stremio powered by Gemini AI",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
