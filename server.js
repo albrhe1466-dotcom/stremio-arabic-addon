@@ -3,24 +3,43 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 7000;
 
+// 1. BULLETPROOF CORS FOR STREMIO CLOUD ADDONS
 app.use(cors());
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    next();
+});
+
 app.use(express.json());
 app.use(express.static(__dirname));
 
 const srtCache = new Map();
 
-app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => {
-    res.json({
-        id: 'org.arabicfushasubtitle.gemini.v18',
-        version: '1.8.0',
-        name: 'Arabic Fusha Subtitle (AI)',
-        description: 'Cinematic Arabic Fusha subtitles for Anime, Movies, and Series powered by Google Gemini AI',
-        types: ['movie', 'series', 'anime', 'tv', 'other'],
-        resources: ['subtitles'],
-        catalogs: []
-    });
+// 2. THE ADDON MANIFEST OBJECT
+const addonManifest = {
+    id: 'org.arabicfushasubtitle.gemini.v18',
+    version: '1.8.0',
+    name: 'Arabic Fusha Subtitle (AI)',
+    description: 'Cinematic Arabic Fusha subtitles for Anime, Movies, and Series powered by Google Gemini AI',
+    types: ['movie', 'series', 'anime', 'tv', 'other'],
+    resources: ['subtitles'],
+    catalogs: [],
+    idPrefixes: ['tt', 'kitsu', 'anilist'] // Helps Stremio recognize supported content
+};
+
+// 3. FALLBACK ROOT MANIFEST (Prevents Stremio crashes if URL is malformed)
+app.get('/manifest.json', (req, res) => {
+    res.json(addonManifest);
 });
 
+// 4. DYNAMIC MANIFEST (Used by your HTML interface)
+app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => {
+    res.json(addonManifest);
+});
+
+// 5. SUBTITLE SRT FILE SERVING
 app.get('/srt-file/:cacheKey', (req, res) => {
     const cacheKey = req.params.cacheKey;
     let content = srtCache.get(cacheKey);
@@ -30,10 +49,10 @@ app.get('/srt-file/:cacheKey', (req, res) => {
     }
     
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(content);
 });
 
+// 6. MAIN TRANSLATION LOGIC
 app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => {
     const { subKey, model, type } = req.params;
     let rawId = req.params.id;
@@ -85,8 +104,11 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
         })();
     }
 
+    // 7. FIX HTTP/HTTPS RENDER PROXY ISSUE
+    // Render often reports req.protocol as HTTP even when accessed via HTTPS.
+    // This forces it to recognize the secure proxy, preventing Stremio mixed-content blocks.
     const host = req.get('host');
-    const protocol = req.protocol;
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol; 
     const localSrtUrl = `${protocol}://${host}/srt-file/${encodeURIComponent(cacheKey)}`;
 
     res.json({
