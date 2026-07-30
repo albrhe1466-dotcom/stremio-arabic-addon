@@ -1,13 +1,22 @@
 {
-  "name": "arabic-al-fusha-subtitle",
+  "id": "org.arabicfushasubtitle.gemini.v18",
   "version": "1.8.0",
-  "description": "Arabic Fusha Subtitles Addon for Stremio powered by Gemini AI",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2"
-  }
+  "name": "Arabic Fusha Subtitle (AI)",
+  "description": "Cinematic Arabic Fusha subtitles for Anime, Movies, and Series powered by Google Gemini AI",
+  "types": [
+    "movie",
+    "series",
+    "anime",
+    "tv",
+    "other"
+  ],
+  "resources": [
+    "subtitles"
+  ],
+  "catalogs": [],
+  "idPrefixes": [
+    "tt",
+    "kitsu",
+    "anilist"
+  ]
 }
