@@ -101,9 +101,8 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
         ]
     });
 });
-
-app.listen(PORT, '127.0.0.1', () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`==================================================`);
-    console.log(`🚀 Universal Gemini Server running at: http://127.0.0.1:${PORT}`);
+    console.log(`🚀 Universal Gemini Server running at: 0.0.0.0:${PORT}`);
     console.log(`==================================================`);
 });
