@@ -34,7 +34,7 @@ app.get('/manifest.json', (req, res) => {
     res.json(addonManifest);
 });
 
-// 4. DYNAMIC MANIFEST (Used by your HTML interface)
+// 4. DYNAMIC MANIFEST (Used by your HTML interface and manual links)
 app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => {
     res.json(addonManifest);
 });
@@ -58,6 +58,7 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
     let rawId = req.params.id;
     if (rawId.endsWith('.json')) rawId = rawId.slice(0, -5);
 
+    // CRITICAL: Clean the Stremio URL junk from the ID
     let cleanId = rawId.split('/filename=')[0].split('&')[0].split('?')[0];
     const cacheKey = `${type}-${cleanId.replace(/[/\\?%*:|"<>\s]/g, '_')}`;
 
@@ -105,8 +106,6 @@ app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => 
     }
 
     // 7. FIX HTTP/HTTPS RENDER PROXY ISSUE
-    // Render often reports req.protocol as HTTP even when accessed via HTTPS.
-    // This forces it to recognize the secure proxy, preventing Stremio mixed-content blocks.
     const host = req.get('host');
     const protocol = req.headers['x-forwarded-proto'] || req.protocol; 
     const localSrtUrl = `${protocol}://${host}/srt-file/${encodeURIComponent(cacheKey)}`;
