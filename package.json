@@ -1,0 +1,13 @@
+{
+  "name": "arabic-al-fusha-subtitle",
+  "version": "1.4.0",
+  "description": "Arabic al fusha susbtitle addon for Stremio",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

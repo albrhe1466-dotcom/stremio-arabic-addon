@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arabic Fusha Subtitle - Submaker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #03050a;
+    --panel: rgba(10, 15, 28, 0.88);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(66, 133, 244, 0.5);
+    
+    --g-blue: #4285F4;
+    --g-red: #EA4335;
+    --g-yellow: #FBBC05;
+    --g-green: #34A853;
+    
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --dim: #64748b;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; width: 100vw; min-height: 100vh;
+    background: var(--bg); color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    overflow-x: hidden;
+  }
+  
+  /* Full-Screen Immersive AI Background Animation (Right to Left) */
+  .ai-bg-container {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0; overflow: hidden; pointer-events: none;
+  }
+  .floating-ai {
+    position: absolute; white-space: nowrap; font-family: 'JetBrains Mono', monospace;
+    font-weight: 800; font-size: 26px; display: flex; align-items: center; gap: 12px;
+    opacity: 0; filter: drop-shadow(0 0 20px currentColor);
+    animation: moveAcrossFull 16s linear infinite;
+  }
+  @keyframes moveAcrossFull {
+    0% { transform: translate(calc(100vw + 350px), var(--start-y)); opacity: 0; }
+    15% { opacity: 0.35; }
+    85% { opacity: 0.35; }
+    100% { transform: translate(-350px, var(--end-y)); opacity: 0; }
+  }
+
+  /* Shooting Star Animation */
+  .shooting-star-container {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0; overflow: hidden; pointer-events: none;
+  }
+  .shooting-star {
+    position: absolute; top: 20%; right: -100px;
+    width: 150px; height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,1));
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
+    animation: shooting 4s ease-in-out infinite;
+  }
+  @keyframes shooting {
+    0% { transform: translateX(200px) translateY(-200px) rotate(-35deg); opacity: 0; }
+    10% { opacity: 1; }
+    40% { transform: translateX(-1200px) translateY(800px) rotate(-35deg); opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .scanlines {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
+  }
+
+  header, main, footer {
+    position: relative; z-index: 2;
+  }
+
+  header {
+    text-align: center; padding: 50px 20px 20px;
+  }
+  .brand-logo {
+    width: 76px; height: 76px; background: linear-gradient(135deg, var(--g-blue), var(--g-red));
+    border-radius: 22px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 900; color: white; box-shadow: 0 12px 35px rgba(66, 133, 244, 0.45);
+    border: 2px solid rgba(255,255,255,0.25);
+  }
+  h1 {
+    font-size: clamp(26px, 4vw, 36px); margin: 0 0 8px; font-weight: 900;
+    background: linear-gradient(90deg, var(--g-blue), var(--g-red), var(--g-yellow), var(--g-green));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  p.sub { color: var(--muted); font-size: 14px; margin: 0; }
+
+  main {
+    max-width: 840px; margin: 0 auto; padding: 10px 20px 70px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+
+  /* Cards / Sections */
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    backdrop-filter: blur(25px);
+    box-shadow: 0 25px 50px -15px rgba(0,0,0,0.85);
+    transition: border-color .25s ease;
+  }
+  .card:hover { border-color: var(--border-hover); }
+
+  .card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 26px; cursor: pointer; user-select: none;
+    background: rgba(255,255,255,0.015);
+  }
+  .card-head-right { display: flex; align-items: center; gap: 14px; }
+  .card-icon {
+    width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: bold;
+  }
+  .icon-blue { background: rgba(66, 133, 244, 0.15); color: var(--g-blue); border: 1px solid rgba(66, 133, 244, 0.3); }
+  .icon-red { background: rgba(234, 67, 53, 0.15); color: var(--g-red); border: 1px solid rgba(234, 67, 53, 0.3); }
+  .icon-yellow { background: rgba(251, 188, 5, 0.15); color: var(--g-yellow); border: 1px solid rgba(251, 188, 5, 0.3); }
+  .icon-green { background: rgba(52, 168, 83, 0.15); color: var(--g-green); border: 1px solid rgba(52, 168, 83, 0.3); }
+
+  .card-head h2 { font-size: 15px; letter-spacing: 0.3px; color: var(--text); margin: 0; font-weight: 700; }
+  .card-toggle { font-size: 14px; color: var(--muted); transition: transform 0.3s ease; }
+  .card.open .card-toggle { transform: rotate(180deg); color: var(--g-blue); }
+
+  .card-body {
+    padding: 0 26px 26px; display: none; border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.3);
+  }
+  .card.open .card-body { display: block; padding-top: 22px; }
+
+  /* Sub-accordion / API sections */
+  .api-sub-card {
+    background: rgba(6, 10, 18, 0.75); border: 1px solid var(--border);
+    border-radius: 14px; margin-bottom: 16px; overflow: hidden;
+  }
+  .api-sub-head {
+    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; font-weight: 700; font-size: 13.5px; color: var(--text);
+  }
+  .api-sub-body {
+    padding: 0 20px 20px; display: none; border-top: 1px solid var(--border);
+  }
+  .api-sub-card.open .api-sub-body { display: block; padding-top: 18px; }
+  .api-sub-card.open .api-sub-head { color: var(--g-blue); background: rgba(66, 133, 244, 0.06); }
+
+  label { display: block; font-size: 12px; color: var(--g-blue); margin: 0 0 6px; font-weight: 700; }
+  
+  /* Input Wrapper with Eye Toggle */
+  .input-wrapper {
+    position: relative; display: flex; align-items: center;
+  }
+  input[type=password], input[type=text].api-input {
+    width: 100%; background: #020306; color: var(--text);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 13px 45px 13px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  input[type=password]:focus, input[type=text].api-input:focus {
+    outline: none; border-color: var(--g-blue);
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.25);
+  }
+  .eye-btn {
+    position: absolute; left: 14px; background: none; border: none; cursor: pointer;
+    font-size: 18px; color: var(--muted); transition: color 0.2s; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .eye-btn:hover { color: var(--text); }
+
+  .field { margin-bottom: 16px; }
+  .hint { font-size: 11.5px; color: var(--dim); margin-top: 6px; line-height: 1.5; }
+  
+  /* Live API Status */
+  .api-status {
+    font-size: 12px; margin-top: 8px; font-weight: bold; font-family: 'Cairo', sans-serif;
+  }
+
+  /* Model Grid */
+  .model-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px; margin-top: 12px;
+  }
+  .model-card {
+    border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+    cursor: pointer; background: #020306; transition: all .2s ease; position: relative;
+  }
+  .model-card:hover { border-color: var(--border-hover); }
+  .model-card.active {
+    border-color: var(--g-blue);
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.25);
+    background: rgba(66, 133, 244, 0.08);
+  }
+  .model-name { font-size: 12.5px; font-weight: 700; color: var(--text); }
+  .model-id { font-size: 10.5px; color: var(--g-blue); font-family: monospace; margin-top: 4px; }
+
+  /* Languages Section */
+  .lang-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+  }
+  @media(max-width: 600px) { .lang-grid { grid-template-columns: 1fr; } }
+  
+  .lang-card {
+    border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+    background: #020306; display: flex; align-items: center; justify-content: space-between;
+  }
+  .lang-card.active { border-color: var(--g-green); background: rgba(52, 168, 83, 0.06); }
+  .lang-card.disabled { opacity: 0.35; cursor: not-allowed; border-style: dashed; }
+  .lang-info h3 { font-size: 14px; margin: 0 0 3px; font-weight: 700; color: var(--text); }
+  .lang-info p { font-size: 11.5px; margin: 0; color: var(--muted); }
+  .lang-status { font-size: 11.5px; font-weight: bold; padding: 5px 12px; border-radius: 20px; }
+  .status-ready { background: rgba(52, 168, 83, 0.2); color: var(--g-green); }
+  .status-progress { background: rgba(251, 188, 5, 0.2); color: var(--g-yellow); }
+
+  /* Bottom Actions */
+  .actions-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  @media(max-width: 700px) { .actions-grid { grid-template-columns: 1fr; } }
+  
+  .action-btn {
+    border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+    text-align: center; cursor: pointer; font-weight: 700; font-size: 13.5px;
+    font-family: 'Cairo', sans-serif; transition: all .2s ease;
+    text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-save { background: rgba(66, 133, 244, 0.12); color: var(--g-blue); border-color: rgba(66, 133, 244, 0.35); }
+  .btn-save:hover { background: rgba(66, 133, 244, 0.22); }
+  
+  .btn-install { background: linear-gradient(135deg, var(--g-green), #059669); color: white; border: none; box-shadow: 0 10px 25px -10px rgba(52,168,83,0.6); }
+  .btn-install:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -10px rgba(52,168,83,0.8); }
+
+  .btn-copy { background: rgba(255,255,255,0.03); color: var(--text); }
+  .btn-copy:hover { background: rgba(255,255,255,0.08); border-color: var(--border-hover); }
+
+  .whats-new-list {
+    margin: 0; padding-right: 20px; font-size: 13px; color: var(--muted); line-height: 1.8;
+  }
+  .whats-new-list li strong { color: var(--text); }
+
+  footer { text-align: center; padding: 30px; color: var(--dim); font-size: 11.5px; }
+
+  /* Bottom Right Toast Notification */
+  #toast {
+    position: fixed; bottom: 25px; right: 25px;
+    background: rgba(10, 15, 28, 0.95);
+    border: 1px solid var(--g-green);
+    color: white; padding: 14px 24px;
+    border-radius: 12px; font-weight: bold; font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    transform: translateY(150px); opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- Background Animation & Shooting Star -->
+<div class="shooting-star-container"><div class="shooting-star"></div></div>
+<div class="ai-bg-container" id="aiBgContainer"></div>
+<div class="scanlines"></div>
+
+<!-- Toast Notification -->
+<div id="toast">✅ <span></span></div>
+
+<header>
+  <div class="brand-logo">S</div>
+  <h1>Arabic Fusha Subtitle</h1>
+  <p class="sub">إضافة Stremio للترجمة السينمائية باللغة العربية الفصحى والذكاء الاصطناعي</p>
+</header>
+
+<main>
+
+  <!-- 1. WHATS NEW -->
+  <div class="card open" id="cardWhatsNew">
+    <div class="card-head" onclick="toggleCard('cardWhatsNew')">
+      <div class="card-head-right">
+        <div class="card-icon icon-yellow">✨</div>
+        <h2>ما الجديد · What's New</h2>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-body">
+      <ul class="whats-new-list">
+        <li><strong>دعم مفاتيح AQ الحديثة و AIza:</strong> التوافق التام مع المفاتيح الصادرة حديثاً من Google AI Studio.</li>
+        <li><strong>أحدث نماذج Google Gemini:</strong> دعم نماذج Gemini 3.5 Flash Lite و Gemini 3.6 Flash و Gemini 3.1 Pro بكفاءة عالية.</li>
+        <li><strong>إظهار/إخفاء المفتاح:</strong> إضافة زر العين بجوار خانات المفاتيح لسهولة المراجعة.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2. API KEYS SECTION -->
+  <div class="card open" id="cardApiKeys">
+    <div class="card-head" onclick="toggleCard('cardApiKeys')">
+      <div class="card-head-right">
+        <div class="card-icon icon-blue">🔑</div>
+        <h2>مفاتيح API · API Keys Configuration</h2>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-body">
+      
+      <!-- SUBTITLE API KEY SUB-CARD -->
+      <div class="api-sub-card open" id="subKeyCard">
+        <div class="api-sub-head" onclick="toggleSubCard('subKeyCard')">
+          <span>مفتاح API للترجمة (Subtitle API Key)</span>
+          <span>▼</span>
+        </div>
+        <div class="api-sub-body">
+          <div class="field">
+            <label for="subApiKeyInput">GEMINI API KEY (SUBTITLES)</label>
+            <div class="input-wrapper">
+              <input type="password" id="subApiKeyInput" class="api-input" placeholder="أدخل مفتاح Google Gemini هنا (يبدأ بـ AQ. أو AIza)">
+              <button type="button" class="eye-btn" onclick="togglePasswordVisibility('subApiKeyInput', this)">👁️</button>
+            </div>
+            <div id="subApiStatus" class="api-status"></div>
+            <div class="hint">مفتاح Google الخاص بتوليد ملفات الترجمة السينمائية بالفصحى. (اضغط خارج المربع لفحص المفتاح)</div>
+          </div>
+          <label>اختر نموذج الذكاء الاصطناعي:</label>
+          <div class="model-grid">
+            <div class="model-card" data-model="gemini-3.5-flash-lite" onclick="selectModel('sub', 'gemini-3.5-flash-lite', this)">
+              <div class="model-name">Gemini 3.5 Flash Lite</div>
+              <div class="model-id">gemini-3.5-flash-lite</div>
+            </div>
+            <div class="model-card active" data-model="gemini-3.6-flash" onclick="selectModel('sub', 'gemini-3.6-flash', this)">
+              <div class="model-name">Gemini 3.6 Flash</div>
+              <div class="model-id">gemini-3.6-flash</div>
+            </div>
+            <div class="model-card" data-model="gemini-3.1-pro" onclick="selectModel('sub', 'gemini-3.1-pro', this)">
+              <div class="model-name">Gemini 3.1 Pro</div>
+              <div class="model-id">gemini-3.1-pro</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI TRANSLATION API KEY SUB-CARD -->
+      <div class="api-sub-card" id="transKeyCard">
+        <div class="api-sub-head" onclick="toggleSubCard('transKeyCard')">
+          <span>مفتاح API للترجمة بالذكاء الاصطناعي (AI Translation API Key)</span>
+          <span>▼</span>
+        </div>
+        <div class="api-sub-body">
+          <div class="field">
+            <label for="transApiKeyInput">GEMINI API KEY (AI TRANSLATION)</label>
+            <div class="input-wrapper">
+              <input type="password" id="transApiKeyInput" class="api-input" placeholder="أدخل مفتاح Google Gemini للترجمة هنا (يبدأ بـ AQ. أو AIza)">
+              <button type="button" class="eye-btn" onclick="togglePasswordVisibility('transApiKeyInput', this)">👁️</button>
+            </div>
+            <div id="transApiStatus" class="api-status"></div>
+            <div class="hint">مفتاح Google الخاص بمعالجة وتحسين سياق الحوارات والنصوص. (اضغط خارج المربع لفحص المفتاح)</div>
+          </div>
+          <label>اختر نموذج الذكاء الاصطناعي:</label>
+          <div class="model-grid">
+            <div class="model-card" data-model="gemini-3.5-flash-lite" onclick="selectModel('trans', 'gemini-3.5-flash-lite', this)">
+              <div class="model-name">Gemini 3.5 Flash Lite</div>
+              <div class="model-id">gemini-3.5-flash-lite</div>
+            </div>
+            <div class="model-card active" data-model="gemini-3.6-flash" onclick="selectModel('trans', 'gemini-3.6-flash', this)">
+              <div class="model-name">Gemini 3.6 Flash</div>
+              <div class="model-id">gemini-3.6-flash</div>
+            </div>
+            <div class="model-card" data-model="gemini-3.1-pro" onclick="selectModel('trans', 'gemini-3.1-pro', this)">
+              <div class="model-name">Gemini 3.1 Pro</div>
+              <div class="model-id">gemini-3.1-pro</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. LANGUAGES SECTION -->
+  <div class="card open" id="cardLang">
+    <div class="card-head" onclick="toggleCard('cardLang')">
+      <div class="card-head-right">
+        <div class="card-icon icon-red">🌐</div>
+        <h2>اللغات المدعومة · Languages</h2>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="lang-grid">
+        <div class="lang-card active">
+          <div class="lang-info">
+            <h3>العربية الفصحى (Arabic)</h3>
+            <p>جاهزة ومستقرة تماماً للاستخدام</p>
+          </div>
+          <div class="lang-status status-ready">متاح</div>
+        </div>
+        <div class="lang-card disabled">
+          <div class="lang-info">
+            <h3>الإنجليزية (English)</h3>
+            <p>قيد التطوير والاختبار حالياً</p>
+          </div>
+          <div class="lang-status status-progress">قريباً</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ACTIONS SECTION -->
+  <div class="card open" id="cardActions">
+    <div class="card-head" onclick="toggleCard('cardActions')">
+      <div class="card-head-right">
+        <div class="card-icon icon-green">🚀</div>
+        <h2>إجراءات التثبيت · Installation & Config</h2>
+      </div>
+      <div class="card-toggle">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="actions-grid">
+        <div class="action-btn btn-save" onclick="saveConfig()">
+          <span>💾</span>
+          <span>حفظ الإعدادات</span>
+        </div>
+        <a href="#" id="installBtn" class="action-btn btn-install">
+          <span>⚡</span>
+          <span>تثبيت في Stremio</span>
+        </a>
+        <div class="action-btn btn-copy" onclick="copyManifestUrl()">
+          <span>📋</span>
+          <span>نسخ رابط التثبيت</span>
+        </div>
+      </div>
+      <div class="hint" id="actionStatus" style="text-align: center; margin-top: 14px; color: var(--g-green); min-height: 20px;"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>Arabic Fusha Subtitle Addon // Submaker Interface</footer>
+
+<script>
+function toggleCard(cardId) {
+  document.getElementById(cardId).classList.toggle('open');
+}
+
+function toggleSubCard(subId) {
+  document.getElementById(subId).classList.toggle('open');
+}
+
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+
+let toastTimeout;
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.querySelector('span').textContent = message;
+  toast.classList.add('show');
+  
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3500);
+}
+
+let selectedSubModel = 'gemini-3.6-flash';
+let selectedTransModel = 'gemini-3.6-flash';
+
+function selectModel(group, modelKey, el) {
+  const container = el.parentElement;
+  container.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  
+  if(group === 'sub') selectedSubModel = modelKey;
+  if(group === 'trans') selectedTransModel = modelKey;
+  updateManifestLink();
+  
+  const modelName = el.querySelector('.model-name').innerText;
+  showToast(`Successfully chose ${modelName}`);
+}
+
+const aiItems = [
+  { name: 'Gemini 3.6 Pro (Google)', logo: '🔮', color: '#4285F4' },
+  { name: 'Kimi AI', logo: '🌙', color: '#60a5fa' },
+  { name: 'Claude 3.5 Sonnet', logo: '⚡', color: '#f59e0b' },
+  { name: 'ChatGPT / GPT-4o', logo: '🤖', color: '#34d399' },
+  { name: 'Perplexity Pro', logo: '🔍', color: '#22d3ee' }
+];
+
+const container = document.getElementById('aiBgContainer');
+function spawnFloatingAI() {
+  const item = aiItems[Math.floor(Math.random() * aiItems.length)];
+  const el = document.createElement('div');
+  el.className = 'floating-ai';
+  el.innerHTML = `<span>${item.logo}</span> <span>${item.name}</span>`;
+  el.style.color = item.color;
+  
+  const startY = Math.random() * (window.innerHeight - 80);
+  const endY = startY + (Math.random() * 320 - 160);
+  const duration = 13 + Math.random() * 7;
+  
+  el.style.setProperty('--start-y', startY + 'px');
+  el.style.setProperty('--end-y', endY + 'px');
+  el.style.animationDuration = duration + 's';
+  
+  container.appendChild(el);
+  setTimeout(() => { el.remove(); }, duration * 1000);
+}
+
+setInterval(spawnFloatingAI, 1100);
+for(let i=0; i<12; i++) {
+  setTimeout(spawnFloatingAI, i * 220);
+}
+
+async function validateApiKey(key, statusElementId) {
+  const statusEl = document.getElementById(statusElementId);
+  
+  if (!key) {
+    statusEl.innerHTML = '';
+    return;
+  }
+
+  statusEl.innerHTML = '⏳ Checking...';
+  statusEl.style.color = 'var(--g-yellow)';
+
+  try {
+     // FIXED: Using the universal Google models endpoint to validate any AQ or AIza key securely
+     const testUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
+     const res = await fetch(testUrl);
+     
+     if (res.ok) {
+        statusEl.innerHTML = '✅ API is Good!';
+        statusEl.style.color = 'var(--g-green)';
+     } else {
+        statusEl.innerHTML = '❌ API is Bad! (Rejected by Google)';
+        statusEl.style.color = 'var(--g-red)';
+     }
+  } catch (error) {
+     statusEl.innerHTML = '❌ API is Bad! (Network Error)';
+     statusEl.style.color = 'var(--g-red)';
+  }
+}
+
+document.getElementById('subApiKeyInput').addEventListener('blur', (e) => {
+  validateApiKey(e.target.value.trim(), 'subApiStatus');
+});
+document.getElementById('transApiKeyInput').addEventListener('blur', (e) => {
+  validateApiKey(e.target.value.trim(), 'transApiStatus');
+});
+
+window.onload = () => {
+  const savedSubKey = localStorage.getItem('sub_api_key');
+  const savedTransKey = localStorage.getItem('trans_api_key');
+  if(savedSubKey) {
+    document.getElementById('subApiKeyInput').value = savedSubKey;
+    validateApiKey(savedSubKey, 'subApiStatus');
+  }
+  if(savedTransKey) {
+    document.getElementById('transApiKeyInput').value = savedTransKey;
+    validateApiKey(savedTransKey, 'transApiStatus');
+  }
+  updateManifestLink();
+};
+
+document.getElementById('subApiKeyInput').addEventListener('input', (e) => {
+  localStorage.setItem('sub_api_key', e.target.value.trim());
+  updateManifestLink();
+});
+
+document.getElementById('transApiKeyInput').addEventListener('input', (e) => {
+  localStorage.setItem('trans_api_key', e.target.value.trim());
+  updateManifestLink();
+});
+
+function getManifestUrl() {
+  const subKey = document.getElementById('subApiKeyInput').value.trim() || 'API_KEY';
+  const transKey = document.getElementById('transApiKeyInput').value.trim() || 'API_KEY';
+  return `https://stremio-arabic-addon.onrender.com/${subKey}/${transKey}/${selectedSubModel}/manifest.json`;
+}
+
+function updateManifestLink() {
+  const url = getManifestUrl();
+  const stremioUrl = url.replace('https://', 'stremio://');
+  document.getElementById('installBtn').href = stremioUrl;
+}
+
+function saveConfig() {
+  const subKey = document.getElementById('subApiKeyInput').value.trim();
+  const transKey = document.getElementById('transApiKeyInput').value.trim();
+  localStorage.setItem('sub_api_key', subKey);
+  localStorage.setItem('trans_api_key', transKey);
+  
+  const status = document.getElementById('actionStatus');
+  status.textContent = '✓ تم حفظ الإعدادات بنجاح في متصفحك!';
+  setTimeout(() => { status.textContent = ''; }, 3500);
+}
+
+function copyManifestUrl() {
+  const url = getManifestUrl();
+  navigator.clipboard.writeText(url);
+  const status = document.getElementById('actionStatus');
+  status.textContent = '✓ تم نسخ رابط التثبيت إلى الحافظة!';
+  setTimeout(() => { status.textContent = ''; }, 3500);
+}
+</script>
+</body>
+</html>
