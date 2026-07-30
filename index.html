@@ -457,7 +457,7 @@ document.getElementById('transApiKeyInput').addEventListener('input', (e) => {
 function getManifestUrl() {
   const subKey = document.getElementById('subApiKeyInput').value.trim() || 'API_KEY';
   const transKey = document.getElementById('transApiKeyInput').value.trim() || 'API_KEY';
-  return `https://submaker.elfhosted.com/${subKey}/${transKey}/${selectedSubModel}/manifest.json`;
+  return `https://stremio-arabic-addon.onrender.com/${subKey}/${transKey}/${selectedSubModel}/manifest.json`;
 }
 
 function updateManifestLink() {
