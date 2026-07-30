@@ -176,7 +176,6 @@
     box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.25);
     background: rgba(66, 133, 244, 0.08);
   }
-  .model-card.maintenance { opacity: 0.5; border-style: dashed; cursor: not-allowed; }
   .model-name { font-size: 12.5px; font-weight: 700; color: var(--text); }
   .model-id { font-size: 10.5px; color: var(--g-blue); font-family: monospace; margin-top: 4px; }
 
@@ -265,7 +264,7 @@
       <ul class="whats-new-list">
         <li><strong>التوافق العالمي الشامل:</strong> دعم الأنمي، المسلسلات، والأفلام بجميع معرفات Stremio (IMDb, Kitsu, AniDB).</li>
         <li><strong>التحويل المحلي النظيف:</strong> منع عرض الرموز الغريبة في Stremio وتحويل ملفات SRT بشكل سليم عبر الخادم المحلي.</li>
-        <li><strong>نماذج Google Gemini النشطة:</strong> دعم كامل لـ Gemini 3.6 Flash و Gemini 3.5 Flash Lite.</li>
+        <li><strong>نماذج Google Gemini النشطة:</strong> دعم كامل لـ Gemini 3.5 Flash Lite و Gemini 3.6 Flash.</li>
       </ul>
     </div>
   </div>
@@ -289,7 +288,7 @@
           <div class="field">
             <label for="subApiKeyInput">GEMINI API KEY (SUBTITLES)</label>
             <div class="input-wrapper">
-              <input type="password" id="subApiKeyInput" class="api-input" placeholder="أدخل مفتاح Google Gemini هنا (يبدأ بـ AQ. أو AIza)">
+              <input type="password" id="subApiKeyInput" class="api-input" placeholder="أدخل مفتاح Google Gemini هنا">
               <button type="button" class="eye-btn" onclick="togglePasswordVisibility('subApiKeyInput', this)">👁️</button>
             </div>
             <div id="subApiStatus" class="api-status"></div>
@@ -297,17 +296,13 @@
           </div>
           <label>اختر نموذج الذكاء الاصطناعي:</label>
           <div class="model-grid">
-            <div class="model-card" data-model="gemini-3.5-flash-lite" onclick="selectModel('sub', 'gemini-3.5-flash-lite', this)">
+            <div class="model-card active" data-model="gemini-3.5-flash-lite" onclick="selectModel('sub', 'gemini-3.5-flash-lite', this)">
               <div class="model-name">Gemini 3.5 Flash Lite</div>
               <div class="model-id">gemini-3.5-flash-lite</div>
             </div>
-            <div class="model-card active" data-model="gemini-3.6-flash" onclick="selectModel('sub', 'gemini-3.6-flash', this)">
+            <div class="model-card" data-model="gemini-3.6-flash" onclick="selectModel('sub', 'gemini-3.6-flash', this)">
               <div class="model-name">Gemini 3.6 Flash</div>
               <div class="model-id">gemini-3.6-flash</div>
-            </div>
-            <div class="model-card maintenance" data-model="gemini-3.1-pro" onclick="selectModel('sub', 'gemini-3.1-pro', this)">
-              <div class="model-name">Gemini 3.1 Pro 🛠️</div>
-              <div class="model-id">Under Maintenance</div>
             </div>
           </div>
         </div>
@@ -394,7 +389,7 @@ function showToast(message) {
   toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3500);
 }
 
-let selectedSubModel = 'gemini-3.6-flash';
+let selectedSubModel = 'gemini-3.5-flash-lite';
 let isArabicSelected = true;
 
 function toggleArabicSelection() {
@@ -414,7 +409,7 @@ function toggleArabicSelection() {
     card.classList.remove('active');
     card.classList.add('deselected');
     status.className = 'lang-status status-deselected';
-    status.textContent = 'غير محدد (Deselected)';
+    status.textContent = 'غير مححدد (Deselected)';
     desc.textContent = 'موقف مؤقتاً لن يتم إرسال ترجمة عربية لـ Stremio';
     showToast('⚠️ تم إلغاء تحديد اللغة العربية');
   }
@@ -422,10 +417,6 @@ function toggleArabicSelection() {
 }
 
 function selectModel(group, modelKey, el) {
-  if (modelKey === 'gemini-3.1-pro') {
-    showToast('⚠️ Gemini 3.1 Pro قيد الصيانة حالياً (Under Maintenance)');
-    return;
-  }
   const container = el.parentElement;
   container.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
@@ -436,11 +427,8 @@ function selectModel(group, modelKey, el) {
 }
 
 const aiItems = [
-  { name: 'Gemini 3.6 Pro (Google)', logo: '🔮', color: '#4285F4' },
-  { name: 'Kimi AI', logo: '🌙', color: '#60a5fa' },
-  { name: 'Claude 3.5 Sonnet', logo: '⚡', color: '#f59e0b' },
-  { name: 'ChatGPT / GPT-4o', logo: '🤖', color: '#34d399' },
-  { name: 'Perplexity Pro', logo: '🔍', color: '#22d3ee' }
+  { name: 'Gemini Flash Lite', logo: '⚡', color: '#4285F4' },
+  { name: 'Gemini Flash', logo: '🔮', color: '#60a5fa' }
 ];
 
 const container = document.getElementById('aiBgContainer');
@@ -490,15 +478,17 @@ document.getElementById('subApiKeyInput').addEventListener('input', (e) => {
   updateManifestLink();
 });
 
+// THIS IS THE FIX. It now dynamically gets the correct cloud URL.
 function getManifestUrl() {
   const subKeyInput = document.getElementById('subApiKeyInput').value.trim();
   const subKey = subKeyInput || 'DEFAULT_SUB_KEY';
-  return `http://127.0.0.1:7000/${subKey}/${subKey}/${selectedSubModel}/manifest.json`;
+  const baseUrl = window.location.origin; 
+  return `${baseUrl}/${subKey}/${subKey}/${selectedSubModel}/manifest.json`;
 }
 
 function updateManifestLink() {
   const url = getManifestUrl();
-  const stremioUrl = url.replace('http://', 'stremio://');
+  const stremioUrl = url.replace('https://', 'stremio://').replace('http://', 'stremio://');
   document.getElementById('installBtn').href = stremioUrl;
 }
 
