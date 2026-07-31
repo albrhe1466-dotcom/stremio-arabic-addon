@@ -12,12 +12,10 @@
     --panel: rgba(10, 15, 28, 0.88);
     --border: rgba(255, 255, 255, 0.08);
     --border-hover: rgba(66, 133, 244, 0.5);
-    
     --g-blue: #4285F4;
     --g-red: #EA4335;
     --g-yellow: #FBBC05;
     --g-green: #34A853;
-    
     --text: #f8fafc;
     --muted: #94a3b8;
     --dim: #64748b;
@@ -30,7 +28,24 @@
     font-family: 'Cairo', sans-serif;
     overflow-x: hidden;
   }
-  
+  .top-lang-switcher {
+    position: absolute; top: 25px; right: 25px; display: flex; gap: 12px; z-index: 100;
+  }
+  .top-lang-btn {
+    width: 48px; height: 48px; border-radius: 12px; background: rgba(10, 15, 28, 0.65);
+    border: 1px solid var(--border); font-size: 26px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); user-select: none;
+  }
+  .top-lang-btn:hover {
+    transform: translateY(-4px) scale(1.08); border-color: var(--border-hover);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  }
+  .top-lang-btn.active {
+    border-color: var(--g-blue); background: rgba(66, 133, 244, 0.15);
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.25), 0 8px 20px rgba(0,0,0,0.5);
+    transform: scale(1.1);
+  }
   .ai-bg-container {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: 0; overflow: hidden; pointer-events: none;
@@ -47,14 +62,12 @@
     85% { opacity: 0.35; }
     100% { transform: translate(-350px, var(--end-y)); opacity: 0; }
   }
-
   .shooting-star-container {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: 0; overflow: hidden; pointer-events: none;
   }
   .shooting-star {
-    position: absolute; top: 20%; right: -100px;
-    width: 150px; height: 2px;
+    position: absolute; top: 20%; right: -100px; width: 150px; height: 2px;
     background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,1));
     filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
     animation: shooting 4s ease-in-out infinite;
@@ -65,15 +78,12 @@
     40% { transform: translateX(-1200px) translateY(800px) rotate(-35deg); opacity: 0; }
     100% { opacity: 0; }
   }
-
   .scanlines {
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
   }
-
   header, main, footer { position: relative; z-index: 2; }
-
-  header { text-align: center; padding: 50px 20px 20px; }
+  header { text-align: center; padding: 70px 20px 20px; }
   .brand-logo {
     width: 76px; height: 76px; background: linear-gradient(135deg, var(--g-blue), var(--g-red));
     border-radius: 22px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
@@ -86,25 +96,19 @@
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   p.sub { color: var(--muted); font-size: 14px; margin: 0; }
-
   main {
     max-width: 840px; margin: 0 auto; padding: 10px 20px 70px;
     display: flex; flex-direction: column; gap: 18px;
   }
-
   .card {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden;
-    backdrop-filter: blur(25px);
-    box-shadow: 0 25px 50px -15px rgba(0,0,0,0.85);
-    transition: border-color .25s ease;
+    border-radius: var(--radius); overflow: hidden; backdrop-filter: blur(25px);
+    box-shadow: 0 25px 50px -15px rgba(0,0,0,0.85); transition: border-color .25s ease;
   }
   .card:hover { border-color: var(--border-hover); }
-
   .card-head {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 26px; cursor: pointer; user-select: none;
-    background: rgba(255,255,255,0.015);
+    padding: 20px 26px; cursor: pointer; user-select: none; background: rgba(255,255,255,0.015);
   }
   .card-head-right { display: flex; align-items: center; gap: 14px; }
   .card-icon {
@@ -115,17 +119,13 @@
   .icon-red { background: rgba(234, 67, 53, 0.15); color: var(--g-red); border: 1px solid rgba(234, 67, 53, 0.3); }
   .icon-yellow { background: rgba(251, 188, 5, 0.15); color: var(--g-yellow); border: 1px solid rgba(251, 188, 5, 0.3); }
   .icon-green { background: rgba(52, 168, 83, 0.15); color: var(--g-green); border: 1px solid rgba(52, 168, 83, 0.3); }
-
   .card-head h2 { font-size: 15px; letter-spacing: 0.3px; color: var(--text); margin: 0; font-weight: 700; }
   .card-toggle { font-size: 14px; color: var(--muted); transition: transform 0.3s ease; }
   .card.open .card-toggle { transform: rotate(180deg); color: var(--g-blue); }
-
   .card-body {
-    padding: 0 26px 26px; display: none; border-top: 1px solid var(--border);
-    background: rgba(0,0,0,0.3);
+    padding: 0 26px 26px; display: none; border-top: 1px solid var(--border); background: rgba(0,0,0,0.3);
   }
   .card.open .card-body { display: block; padding-top: 22px; }
-
   .api-sub-card {
     background: rgba(6, 10, 18, 0.75); border: 1px solid var(--border);
     border-radius: 14px; margin-bottom: 16px; overflow: hidden;
@@ -137,9 +137,7 @@
   .api-sub-body { padding: 0 20px 20px; display: none; border-top: 1px solid var(--border); }
   .api-sub-card.open .api-sub-body { display: block; padding-top: 18px; }
   .api-sub-card.open .api-sub-head { color: var(--g-blue); background: rgba(66, 133, 244, 0.06); }
-
   label { display: block; font-size: 12px; color: var(--g-blue); margin: 0 0 6px; font-weight: 700; }
-  
   .input-wrapper { position: relative; display: flex; align-items: center; }
   input[type=password], input[type=text].api-input {
     width: 100%; background: #020306; color: var(--text);
@@ -148,40 +146,32 @@
     transition: border-color .2s ease, box-shadow .2s ease;
   }
   input[type=password]:focus, input[type=text].api-input:focus {
-    outline: none; border-color: var(--g-blue);
-    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.25);
+    outline: none; border-color: var(--g-blue); box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.25);
   }
   .eye-btn {
-    position: absolute; left: 14px; background: none; border: none; cursor: pointer;
+    position: absolute; left: 14px; background: transparent; border: none; cursor: pointer;
     font-size: 18px; color: var(--muted); transition: color 0.2s; padding: 0;
     display: flex; align-items: center; justify-content: center;
   }
   .eye-btn:hover { color: var(--text); }
-
   .field { margin-bottom: 16px; }
   .hint { font-size: 11.5px; color: var(--dim); margin-top: 6px; line-height: 1.5; }
   .api-status { font-size: 12px; margin-top: 8px; font-weight: bold; font-family: 'Cairo', sans-serif; }
-
   .model-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 12px; margin-top: 12px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-top: 12px;
   }
   .model-card {
     border: 1px solid var(--border); border-radius: 12px; padding: 14px;
     cursor: pointer; background: #020306; transition: all .2s ease; position: relative;
   }
-  .model-card:hover { border-color: var(--border-hover); }
+  .model-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
   .model-card.active {
-    border-color: var(--g-blue);
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.25);
-    background: rgba(66, 133, 244, 0.08);
+    border-color: var(--g-blue); box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.25); background: rgba(66, 133, 244, 0.08);
   }
   .model-name { font-size: 12.5px; font-weight: 700; color: var(--text); }
   .model-id { font-size: 10.5px; color: var(--g-blue); font-family: monospace; margin-top: 4px; }
-
   .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
   @media(max-width: 600px) { .lang-grid { grid-template-columns: 1fr; } }
-  
   .lang-card {
     border: 1px solid var(--border); border-radius: 14px; padding: 18px;
     background: #020306; display: flex; align-items: center; justify-content: space-between;
@@ -197,10 +187,8 @@
   .status-selected { background: rgba(52, 168, 83, 0.2); color: var(--g-green); }
   .status-deselected { background: rgba(234, 67, 53, 0.15); color: var(--g-red); }
   .status-progress { background: rgba(251, 188, 5, 0.2); color: var(--g-yellow); }
-
   .actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   @media(max-width: 700px) { .actions-grid { grid-template-columns: 1fr; } }
-  
   .action-btn {
     border: 1px solid var(--border); border-radius: 14px; padding: 18px;
     text-align: center; cursor: pointer; font-weight: 700; font-size: 13.5px;
@@ -209,28 +197,19 @@
   }
   .btn-save { background: rgba(66, 133, 244, 0.12); color: var(--g-blue); border-color: rgba(66, 133, 244, 0.35); }
   .btn-save:hover { background: rgba(66, 133, 244, 0.22); }
-  
   .btn-install { background: linear-gradient(135deg, var(--g-green), #059669); color: white; border: none; box-shadow: 0 10px 25px -10px rgba(52,168,83,0.6); }
   .btn-install:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -10px rgba(52,168,83,0.8); }
-
   .btn-copy { background: rgba(255,255,255,0.03); color: var(--text); }
   .btn-copy:hover { background: rgba(255,255,255,0.08); border-color: var(--border-hover); }
-
   .whats-new-list { margin: 0; padding-right: 20px; font-size: 13px; color: var(--muted); line-height: 1.8; }
   .whats-new-list li strong { color: var(--text); }
-
   footer { text-align: center; padding: 30px; color: var(--dim); font-size: 11.5px; }
-
   #toast {
-    position: fixed; bottom: 25px; right: 25px;
-    background: rgba(10, 15, 28, 0.95);
-    border: 1px solid var(--g-green);
-    color: white; padding: 14px 24px;
+    position: fixed; bottom: 25px; right: 25px; background: rgba(10, 15, 28, 0.95);
+    border: 1px solid var(--g-green); color: white; padding: 14px 24px;
     border-radius: 12px; font-weight: bold; font-size: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    transform: translateY(150px); opacity: 0;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 9999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6); transform: translateY(150px); opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999;
     display: flex; align-items: center; gap: 10px;
   }
   #toast.show { transform: translateY(0); opacity: 1; }
@@ -244,6 +223,11 @@
 
 <div id="toast">✅ <span></span></div>
 
+<div class="top-lang-switcher">
+  <div class="top-lang-btn active" onclick="switchUILang('ar', this)" title="Arabic">🇸🇦</div>
+  <div class="top-lang-btn" onclick="switchUILang('en', this)" title="English">🇺🇸</div>
+</div>
+
 <header>
   <div class="brand-logo">S</div>
   <h1>Arabic Fusha Subtitle</h1>
@@ -251,7 +235,6 @@
 </header>
 
 <main>
-
   <div class="card open" id="cardWhatsNew">
     <div class="card-head" onclick="toggleCard('cardWhatsNew')">
       <div class="card-head-right">
@@ -263,8 +246,8 @@
     <div class="card-body">
       <ul class="whats-new-list">
         <li><strong>التوافق العالمي الشامل:</strong> دعم الأنمي، المسلسلات، والأفلام بجميع معرفات Stremio (IMDb, Kitsu, AniDB).</li>
-        <li><strong>التحويل المحلي النظيف:</strong> منع عرض الرموز الغريبة في Stremio وتحويل ملفات SRT بشكل سليم عبر الخادم المحلي.</li>
-        <li><strong>نماذج Google Gemini النشطة:</strong> دعم كامل لـ Gemini 3.5 Flash Lite و Gemini 3.6 Flash.</li>
+        <li><strong>التحويل المحلي النظيف:</strong> معالجة ذكية وسريعة عبر الخادم المحلي لمنع عرض الرموز الغريبة.</li>
+        <li><strong>نماذج الذكاء الاصطناعي النشطة:</strong> إضافة نموذج <strong>Arabic fusha (Embedded)</strong> الجديد.</li>
       </ul>
     </div>
   </div>
@@ -278,7 +261,6 @@
       <div class="card-toggle">▼</div>
     </div>
     <div class="card-body">
-      
       <div class="api-sub-card open" id="subKeyCard">
         <div class="api-sub-head" onclick="toggleSubCard('subKeyCard')">
           <span>مفتاح API للترجمة (Subtitle API Key)</span>
@@ -292,22 +274,25 @@
               <button type="button" class="eye-btn" onclick="togglePasswordVisibility('subApiKeyInput', this)">👁️</button>
             </div>
             <div id="subApiStatus" class="api-status"></div>
-            <div class="hint">مفتاح Google الخاص بتوليد ملفات الترجمة السينمائية بالفصحى.</div>
+            <div class="hint">مفتاح Google الخاص بتوليد ملفات الترجمة.</div>
           </div>
           <label>اختر نموذج الذكاء الاصطناعي:</label>
           <div class="model-grid">
-            <div class="model-card active" data-model="gemini-3.5-flash-lite" onclick="selectModel('sub', 'gemini-3.5-flash-lite', this)">
+            <div class="model-card active" data-model="gemini-3.6-flash" onclick="selectModel('sub', 'gemini-3.6-flash', this)">
+              <div class="model-name">Gemini 3.6 Flash</div>
+              <div class="model-id">gemini-3.6-flash</div>
+            </div>
+            <div class="model-card" data-model="gemini-3.5-flash-lite" onclick="selectModel('sub', 'gemini-3.5-flash-lite', this)">
               <div class="model-name">Gemini 3.5 Flash Lite</div>
               <div class="model-id">gemini-3.5-flash-lite</div>
             </div>
-            <div class="model-card" data-model="gemini-3.6-flash" onclick="selectModel('sub', 'gemini-3.6-flash', this)">
-              <div class="model-name">Gemini 3.6 Flash</div>
-              <div class="model-id">gemini-3.6-flash</div>
+            <div class="model-card" data-model="arabic-fusha-embedded" onclick="selectModel('sub', 'arabic-fusha-embedded', this)">
+              <div class="model-name">Arabic fusha (Embedded)</div>
+              <div class="model-id">arabic-fusha-embedded</div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -365,7 +350,6 @@
       <div class="hint" id="actionStatus" style="text-align: center; margin-top: 14px; color: var(--g-green); min-height: 20px;"></div>
     </div>
   </div>
-
 </main>
 
 <footer>Arabic Fusha Subtitle Addon // Submaker Interface</footer>
@@ -389,7 +373,17 @@ function showToast(message) {
   toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3500);
 }
 
-let selectedSubModel = 'gemini-3.5-flash-lite';
+function switchUILang(lang, btnElement) {
+  document.querySelectorAll('.top-lang-btn').forEach(btn => btn.classList.remove('active'));
+  btnElement.classList.add('active');
+  if(lang === 'en') {
+    showToast('English UI coming later. / سيتم إضافة واجهة اللغة الإنجليزية لاحقاً');
+  } else {
+    showToast('تم اختيار الواجهة العربية');
+  }
+}
+
+let selectedSubModel = 'gemini-3.6-flash';
 let isArabicSelected = true;
 
 function toggleArabicSelection() {
@@ -409,7 +403,7 @@ function toggleArabicSelection() {
     card.classList.remove('active');
     card.classList.add('deselected');
     status.className = 'lang-status status-deselected';
-    status.textContent = 'غير مححدد (Deselected)';
+    status.textContent = 'غير محدد (Deselected)';
     desc.textContent = 'موقف مؤقتاً لن يتم إرسال ترجمة عربية لـ Stremio';
     showToast('⚠️ تم إلغاء تحديد اللغة العربية');
   }
@@ -427,8 +421,11 @@ function selectModel(group, modelKey, el) {
 }
 
 const aiItems = [
-  { name: 'Gemini Flash Lite', logo: '⚡', color: '#4285F4' },
-  { name: 'Gemini Flash', logo: '🔮', color: '#60a5fa' }
+  { name: 'Gemini 3.6 Pro (Google)', logo: '🔮', color: '#4285F4' },
+  { name: 'Kimi AI', logo: '🌙', color: '#60a5fa' },
+  { name: 'Claude 3.5 Sonnet', logo: '⚡', color: '#f59e0b' },
+  { name: 'ChatGPT / GPT-4o', logo: '🤖', color: '#34d399' },
+  { name: 'Perplexity Pro', logo: '🔍', color: '#22d3ee' }
 ];
 
 const container = document.getElementById('aiBgContainer');
@@ -478,17 +475,15 @@ document.getElementById('subApiKeyInput').addEventListener('input', (e) => {
   updateManifestLink();
 });
 
-// THIS IS THE FIX. It now dynamically gets the correct cloud URL.
 function getManifestUrl() {
   const subKeyInput = document.getElementById('subApiKeyInput').value.trim();
   const subKey = subKeyInput || 'DEFAULT_SUB_KEY';
-  const baseUrl = window.location.origin; 
-  return `${baseUrl}/${subKey}/${subKey}/${selectedSubModel}/manifest.json`;
+  return `http://127.0.0.1:7000/${subKey}/${subKey}/${selectedSubModel}/manifest.json`;
 }
 
 function updateManifestLink() {
   const url = getManifestUrl();
-  const stremioUrl = url.replace('https://', 'stremio://').replace('http://', 'stremio://');
+  const stremioUrl = url.replace('http://', 'stremio://');
   document.getElementById('installBtn').href = stremioUrl;
 }
 
