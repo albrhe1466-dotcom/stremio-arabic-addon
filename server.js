@@ -1,90 +1,109 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
+const axios = require('axios'); // Optional, included for API calls if needed
 
 const app = express();
-app.use(cors());
+
+// ==========================================
+// 1. CONFIGURATION & CLOUD PROXY SETUP
+// ==========================================
+app.set('trust proxy', true);
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Range']
+}));
 app.use(express.json());
 
-// Unicode BiDi Controls to lock RTL rendering in Stremio
-const RLE = '\u202B'; // Right-to-Left Embedding
-const PDF = '\u202C'; // Pop Directional Formatting
+// Load API key from Railway environment variables (secure storage)
+const CLAUDE_API_KEY = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
 
-// Live Terminal Logger
-app.use((req, res, next) => {
-    console.log(`\n[${new Date().toLocaleTimeString()}] 📡 ${req.method} ${req.originalUrl}`);
-    next();
-});
-
-// Serve UI Page
+// ==========================================
+// 2. ROOT & HEALTH CHECK ROUTES
+// ==========================================
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Manifest Route
-app.get('*manifest.json', (req, res) => {
-    const rawUrl = req.originalUrl.toLowerCase();
-    let displayName = "Arabic Fusha (EMBEDDED)";
-    
-    if (rawUrl.includes('lite')) displayName = "Arabic Fusha (LITE)";
-    if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
-
-    res.setHeader('Content-Type', 'application/json');
-    res.json({
-        id: "org.arabic.fusha.ai.subtitle",
-        version: "2.2.0",
-        name: displayName,
-        description: "Your Independent AI Arabic Fusha Subtitles.",
-        logo: "https://i.imgur.com/h7eKUdF.png",
-        types: ["movie", "series", "anime", "other"],
-        resources: ["subtitles"]
+    res.status(200).send({
+        status: 'online',
+        service: 'Stremio Claude Arabic Translator Addon',
+        version: '2.2.0',
+        timestamp: new Date().toISOString()
     });
 });
 
-// Subtitle Menu Variant
-app.get('*subtitles*', (req, res) => {
-    const host = req.get('host') || '127.0.0.1:7000';
-    const rawUrl = decodeURIComponent(req.originalUrl);
+// ==========================================
+// 3. STREMIO MANIFEST ROUTE
+// ==========================================
+app.get('/manifest.json', (req, res) => {
+    const manifest = {
+        id: 'org.stremio.arabicclaudetranslator',
+        version: '2.2.0',
+        name: 'Arabic Claude Translator Addon',
+        description: 'Real-time or cached AI-powered Arabic subtitle translation for Stremio using Claude.',
+        resources: ['subtitles'],
+        types: ['movie', 'series'],
+        idPrefixes: ['tt'],
+        catalogs: []
+    };
     
-    const match = rawUrl.match(/subtitles\/([^/]+)\/([^/]+)/);
-    const type = match ? match[1] : 'series';
-    let rawId = match ? match[2] : 'all';
-    const cleanId = rawId.split('/filename=')[0].split('.json')[0].split('&')[0];
-
-    let displayName = "Arabic Fusha (EMBEDDED)";
-    if (rawUrl.includes('lite')) displayName = "Arabic Fusha (LITE)";
-    if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
-
-    res.setHeader('Content-Type', 'application/json');
-    res.json({
-        subtitles: [{
-            id: `my_fusha_${cleanId}`,
-            url: `http://${host}/local-srt/${encodeURIComponent(cleanId)}/sub.srt`,
-            lang: "ara",
-            name: displayName
-        }]
-    });
+    res.setHeader('Cache-Control', 'max-age=86400, public'); // Cache manifest gracefully
+    res.json(manifest);
 });
 
-// Custom SRT Delivery Route with Strict BiDi Enforcement
-app.get('/local-srt/:id/sub.srt', (req, res) => {
-    const mediaId = req.params.id;
-    console.log(`  ├─> Delivering BiDi-locked subtitles for: ${mediaId}`);
+// ==========================================
+// 4. SUBTITLES ROUTE (CORE LOGIC)
+// ==========================================
+app.get('/subtitles/:type/:id/:extra?.json', async (req, res) => {
+    const { type, id, extra } = req.params;
+    
+    // Parse extra parameters if Stremio passes season/episode data
+    let season = null;
+    let episode = null;
+    if (extra) {
+        // Example parsing if extra contains videoHash or S&E format
+        console.log(`[Extra Params] ${extra}`);
+    }
 
-    const myCustomSubtitle = `1
-00:00:01,000 --> 00:00:05,000
-${RLE}[الترجمة العربية الفصحى]${PDF}
-${RLE}تم تفعيل الترجمة بنجاح.${PDF}
+    console.log(`[Stremio Request] Incoming Subtitle Query -> Type: ${type}, ID: ${id}`);
 
-2
-00:00:06,000 --> 00:00:10,000
-${RLE}المشروع لك بالكامل. لا توجد خوادم خارجية.${PDF}`;
+    try {
+        // ==========================================
+        // INSERT YOUR SUBTITLE FETCHING & CLAUDE TRANSLATION LOGIC HERE
+        // ==========================================
+        // Example structure for what your code needs to return:
+        
+        const translatedSubtitles = [
+            {
+                id: `${id}-ar-claude`,
+                url: `https://example.com/generated-arabic-subtitles.vtt`, // Or inline text/data if supported
+                lang: 'ara',
+                subtitlesName: 'Arabic (Claude Fusha)'
+            }
+        ];
 
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.send(myCustomSubtitle);
+        // If you are calling Claude API directly from the server:
+        /*
+        if (CLAUDE_API_KEY) {
+            // Add your API call to Anthropic here using axios or fetch
+        }
+        */
+
+        res.json({
+            subtitles: translatedSubtitles
+        });
+
+    } catch (error) {
+        console.error('[Translation Error]:', error.message);
+        res.status(500).json({
+            subtitles: [],
+            error: 'Failed to generate or fetch subtitles.'
+        });
+    }
 });
 
-const PORT = 7000;
+// ==========================================
+// 5. SERVER INITIALIZATION
+// ==========================================
+const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
-    console.log(`🚀 Independent Subtitle Server active at http://localhost:${PORT}`);
+    console.log(`🚀 Stremio Arabic Translator Server running live on port ${PORT}`);
 });
