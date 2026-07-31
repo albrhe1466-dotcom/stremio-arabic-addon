@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arabic Fusha Subtitle - Submaker</title>
+<title>Arabic Fusha Subtitle - Made by Abdullah</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -31,6 +31,7 @@
   .top-lang-switcher {
     position: absolute; top: 25px; right: 25px; display: flex; gap: 12px; z-index: 100;
   }
+  html[dir="ltr"] .top-lang-switcher { right: auto; left: 25px; }
   .top-lang-btn {
     width: 48px; height: 48px; border-radius: 12px; background: rgba(10, 15, 28, 0.65);
     border: 1px solid var(--border); font-size: 26px; display: flex; align-items: center;
@@ -52,15 +53,15 @@
   }
   .floating-ai {
     position: absolute; white-space: nowrap; font-family: 'JetBrains Mono', monospace;
-    font-weight: 800; font-size: 26px; display: flex; align-items: center; gap: 12px;
-    opacity: 0; filter: drop-shadow(0 0 20px currentColor);
-    animation: moveAcrossFull 16s linear infinite;
+    font-weight: 800; font-size: 20px; display: flex; align-items: center; gap: 10px;
+    opacity: 0; filter: drop-shadow(0 0 12px currentColor); pointer-events: none;
+    animation: moveAcrossFull 14s linear infinite;
   }
   @keyframes moveAcrossFull {
-    0% { transform: translate(calc(100vw + 350px), var(--start-y)); opacity: 0; }
-    15% { opacity: 0.35; }
-    85% { opacity: 0.35; }
-    100% { transform: translate(-350px, var(--end-y)); opacity: 0; }
+    0% { transform: translate3d(105vw, var(--start-y), 0); opacity: 0; }
+    15% { opacity: 0.85; }
+    85% { opacity: 0.85; }
+    100% { transform: translate3d(-350px, var(--end-y), 0); opacity: 0; }
   }
   .shooting-star-container {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -87,8 +88,11 @@
   .brand-logo {
     width: 76px; height: 76px; background: linear-gradient(135deg, var(--g-blue), var(--g-red));
     border-radius: 22px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
-    font-size: 32px; font-weight: 900; color: white; box-shadow: 0 12px 35px rgba(66, 133, 244, 0.45);
+    box-shadow: 0 12px 35px rgba(66, 133, 244, 0.45);
     border: 2px solid rgba(255,255,255,0.25);
+    background-image: url('https://i.imgur.com/h7eKUdF.png');
+    background-size: cover;
+    background-position: center;
   }
   h1 {
     font-size: clamp(26px, 4vw, 36px); margin: 0 0 8px; font-weight: 900;
@@ -145,6 +149,7 @@
     padding: 13px 45px 13px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
     transition: border-color .2s ease, box-shadow .2s ease;
   }
+  html[dir="ltr"] input[type=password], html[dir="ltr"] input[type=text].api-input { padding: 13px 16px 13px 45px; }
   input[type=password]:focus, input[type=text].api-input:focus {
     outline: none; border-color: var(--g-blue); box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.25);
   }
@@ -153,10 +158,11 @@
     font-size: 18px; color: var(--muted); transition: color 0.2s; padding: 0;
     display: flex; align-items: center; justify-content: center;
   }
+  html[dir="ltr"] .eye-btn { left: auto; right: 14px; }
   .eye-btn:hover { color: var(--text); }
   .field { margin-bottom: 16px; }
   .hint { font-size: 11.5px; color: var(--dim); margin-top: 6px; line-height: 1.5; }
-  .api-status { font-size: 12px; margin-top: 8px; font-weight: bold; font-family: 'Cairo', sans-serif; }
+  .api-status { font-size: 12px; margin-top: 8px; font-weight: bold; }
   .model-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-top: 12px;
   }
@@ -192,7 +198,7 @@
   .action-btn {
     border: 1px solid var(--border); border-radius: 14px; padding: 18px;
     text-align: center; cursor: pointer; font-weight: 700; font-size: 13.5px;
-    font-family: 'Cairo', sans-serif; transition: all .2s ease;
+    transition: all .2s ease;
     text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
   }
   .btn-save { background: rgba(66, 133, 244, 0.12); color: var(--g-blue); border-color: rgba(66, 133, 244, 0.35); }
@@ -202,6 +208,7 @@
   .btn-copy { background: rgba(255,255,255,0.03); color: var(--text); }
   .btn-copy:hover { background: rgba(255,255,255,0.08); border-color: var(--border-hover); }
   .whats-new-list { margin: 0; padding-right: 20px; font-size: 13px; color: var(--muted); line-height: 1.8; }
+  html[dir="ltr"] .whats-new-list { padding-right: 0; padding-left: 20px; }
   .whats-new-list li strong { color: var(--text); }
   footer { text-align: center; padding: 30px; color: var(--dim); font-size: 11.5px; }
   #toast {
@@ -212,7 +219,9 @@
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999;
     display: flex; align-items: center; gap: 10px;
   }
+  html[dir="ltr"] #toast { right: auto; left: 25px; }
   #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.error { border-color: var(--g-red); background: rgba(40, 10, 15, 0.95); }
 </style>
 </head>
 <body>
@@ -221,17 +230,17 @@
 <div class="ai-bg-container" id="aiBgContainer"></div>
 <div class="scanlines"></div>
 
-<div id="toast">✅ <span></span></div>
+<div id="toast">✅ <span id="toastText"></span></div>
 
 <div class="top-lang-switcher">
-  <div class="top-lang-btn active" onclick="switchUILang('ar', this)" title="Arabic">🇸🇦</div>
-  <div class="top-lang-btn" onclick="switchUILang('en', this)" title="English">🇺🇸</div>
+  <div class="top-lang-btn" onclick="switchUILang('ar', this)" title="Arabic">🇸🇦</div>
+  <div class="top-lang-btn active" onclick="switchUILang('en', this)" title="English">🇺🇸</div>
 </div>
 
 <header>
-  <div class="brand-logo">S</div>
-  <h1>Arabic Fusha Subtitle</h1>
-  <p class="sub">إضافة Stremio للترجمة السينمائية بالفصحى للأنمي، المسلسلات والأفلام</p>
+  <div class="brand-logo"></div>
+  <h1 id="headerTitle">Arabic Fusha Subtitle</h1>
+  <p class="sub" id="headerSub">Stremio Addon for Fusha Arabic Cinematic Subtitles for Anime, Series & Movies</p>
 </header>
 
 <main>
@@ -239,15 +248,15 @@
     <div class="card-head" onclick="toggleCard('cardWhatsNew')">
       <div class="card-head-right">
         <div class="card-icon icon-yellow">✨</div>
-        <h2>ما الجديد · What's New</h2>
+        <h2 id="whatsNewHeading">What's New · ما الجديد</h2>
       </div>
       <div class="card-toggle">▼</div>
     </div>
     <div class="card-body">
-      <ul class="whats-new-list">
-        <li><strong>التوافق العالمي الشامل:</strong> دعم الأنمي، المسلسلات، والأفلام بجميع معرفات Stremio (IMDb, Kitsu, AniDB).</li>
-        <li><strong>التحويل المحلي النظيف:</strong> معالجة ذكية وسريعة عبر الخادم المحلي لمنع عرض الرموز الغريبة.</li>
-        <li><strong>نماذج الذكاء الاصطناعي النشطة:</strong> إضافة نموذج <strong>Arabic fusha (Embedded)</strong> الجديد.</li>
+      <ul class="whats-new-list" id="whatsNewContent">
+        <li><strong>Multi-Model Architecture:</strong> Supports Pro, Flash, and Lite models seamlessly via dynamic manifests.</li>
+        <li><strong>English Interface:</strong> Full interface translation added for English users.</li>
+        <li><strong>Server Pairings:</strong> Fully synchronized with backend server.js routing.</li>
       </ul>
     </div>
   </div>
@@ -256,39 +265,39 @@
     <div class="card-head" onclick="toggleCard('cardApiKeys')">
       <div class="card-head-right">
         <div class="card-icon icon-blue">🔑</div>
-        <h2>مفاتيح API · API Keys Configuration</h2>
+        <h2 id="apiKeysHeading">API Keys Configuration · مفاتيح API</h2>
       </div>
       <div class="card-toggle">▼</div>
     </div>
     <div class="card-body">
       <div class="api-sub-card open" id="subKeyCard">
         <div class="api-sub-head" onclick="toggleSubCard('subKeyCard')">
-          <span>مفتاح API للترجمة (Subtitle API Key)</span>
+          <span id="subApiKeyTitle">Subtitle API Key (مفتاح API للترجمة)</span>
           <span>▼</span>
         </div>
         <div class="api-sub-body">
           <div class="field">
             <label for="subApiKeyInput">GEMINI API KEY (SUBTITLES)</label>
             <div class="input-wrapper">
-              <input type="password" id="subApiKeyInput" class="api-input" placeholder="أدخل مفتاح Google Gemini هنا">
+              <input type="password" id="subApiKeyInput" class="api-input" placeholder="Enter your Google Gemini API Key here">
               <button type="button" class="eye-btn" onclick="togglePasswordVisibility('subApiKeyInput', this)">👁️</button>
             </div>
             <div id="subApiStatus" class="api-status"></div>
-            <div class="hint">مفتاح Google الخاص بتوليد ملفات الترجمة.</div>
+            <div class="hint" id="apiKeyHint">Google API key required for subtitle generation.</div>
           </div>
-          <label>اختر نموذج الذكاء الاصطناعي:</label>
+          <label id="selectModelLabel">Select AI Model:</label>
           <div class="model-grid">
-            <div class="model-card active" data-model="gemini-3.6-flash" onclick="selectModel('sub', 'gemini-3.6-flash', this)">
+            <div class="model-card active" data-model="gemini-3.6-flash" onclick="selectModel('gemini-3.6-flash', this)">
               <div class="model-name">Gemini 3.6 Flash</div>
               <div class="model-id">gemini-3.6-flash</div>
             </div>
-            <div class="model-card" data-model="gemini-3.5-flash-lite" onclick="selectModel('sub', 'gemini-3.5-flash-lite', this)">
+            <div class="model-card" data-model="gemini-3.5-flash-lite" onclick="selectModel('gemini-3.5-flash-lite', this)">
               <div class="model-name">Gemini 3.5 Flash Lite</div>
               <div class="model-id">gemini-3.5-flash-lite</div>
             </div>
-            <div class="model-card" data-model="arabic-fusha-embedded" onclick="selectModel('sub', 'arabic-fusha-embedded', this)">
-              <div class="model-name">Arabic fusha (Embedded)</div>
-              <div class="model-id">arabic-fusha-embedded</div>
+            <div class="model-card" data-model="gemini-3.1-pro" onclick="selectModel('gemini-3.1-pro', this)">
+              <div class="model-name">Gemini 3.1 Pro</div>
+              <div class="model-id">gemini-3.1-pro</div>
             </div>
           </div>
         </div>
@@ -300,7 +309,7 @@
     <div class="card-head" onclick="toggleCard('cardLang')">
       <div class="card-head-right">
         <div class="card-icon icon-red">🌐</div>
-        <h2>اللغات المدعومة · Languages</h2>
+        <h2 id="languagesHeading">Languages · اللغات المدعومة</h2>
       </div>
       <div class="card-toggle">▼</div>
     </div>
@@ -308,17 +317,17 @@
       <div class="lang-grid">
         <div class="lang-card active" id="arabicLangCard" onclick="toggleArabicSelection()">
           <div class="lang-info">
-            <h3>العربية الفصحى (Arabic)</h3>
-            <p id="arabicLangDesc">مفعلة وجاهزة لتوليد الترجمة السينمائية</p>
+            <h3 id="arabicLangTitle">Arabic Fusha (العربية الفصحى)</h3>
+            <p id="arabicLangDesc">Active and ready for cinematic subtitle generation</p>
           </div>
-          <div class="lang-status status-selected" id="arabicLangStatus">محدد (Selected)</div>
+          <div class="lang-status status-selected" id="arabicLangStatus">Selected (محدد)</div>
         </div>
         <div class="lang-card disabled">
           <div class="lang-info">
-            <h3>الإنجليزية (English)</h3>
-            <p>قيد التطوير والاختبار حالياً</p>
+            <h3 id="englishLangTitle">English (الإنجليزية)</h3>
+            <p id="englishLangDesc">Under development and testing</p>
           </div>
-          <div class="lang-status status-progress">قريباً</div>
+          <div class="lang-status status-progress" id="englishLangProgress">Soon</div>
         </div>
       </div>
     </div>
@@ -328,7 +337,7 @@
     <div class="card-head" onclick="toggleCard('cardActions')">
       <div class="card-head-right">
         <div class="card-icon icon-green">🚀</div>
-        <h2>إجراءات التثبيت · Installation & Config</h2>
+        <h2 id="installConfigHeading">Installation & Config · إجراءات التثبيت</h2>
       </div>
       <div class="card-toggle">▼</div>
     </div>
@@ -336,15 +345,15 @@
       <div class="actions-grid">
         <div class="action-btn btn-save" onclick="saveConfig()">
           <span>💾</span>
-          <span>حفظ الإعدادات</span>
+          <span id="saveBtnText">Save Settings</span>
         </div>
-        <a href="#" id="installBtn" class="action-btn btn-install">
+        <a href="#" id="installBtn" class="action-btn btn-install" onclick="return handleInstallClick(event)">
           <span>⚡</span>
-          <span>تثبيت في Stremio</span>
+          <span id="installBtnText">Install in Stremio</span>
         </a>
         <div class="action-btn btn-copy" onclick="copyManifestUrl()">
           <span>📋</span>
-          <span>نسخ رابط التثبيت</span>
+          <span id="copyBtnText">Copy Install Link</span>
         </div>
       </div>
       <div class="hint" id="actionStatus" style="text-align: center; margin-top: 14px; color: var(--g-green); min-height: 20px;"></div>
@@ -352,7 +361,7 @@
   </div>
 </main>
 
-<footer>Arabic Fusha Subtitle Addon // Submaker Interface</footer>
+<footer id="footerText">Arabic Fusha Subtitle Addon // Made by Abdullah</footer>
 
 <script>
 function toggleCard(cardId) { document.getElementById(cardId).classList.toggle('open'); }
@@ -365,21 +374,109 @@ function togglePasswordVisibility(inputId, btn) {
 }
 
 let toastTimeout;
-function showToast(message) {
+function showToast(message, isError = false) {
   const toast = document.getElementById('toast');
-  toast.querySelector('span').textContent = message;
+  const textSpan = document.getElementById('toastText');
+  textSpan.textContent = message;
+  toast.querySelector('span').textContent = (isError ? '⚠️ ' : '✅ ') + message;
+  if(isError) {
+    toast.classList.add('error');
+  } else {
+    toast.classList.remove('error');
+  }
   toast.classList.add('show');
   clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3500);
+  toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 4000);
 }
+
+let currentUILang = 'en';
 
 function switchUILang(lang, btnElement) {
   document.querySelectorAll('.top-lang-btn').forEach(btn => btn.classList.remove('active'));
   btnElement.classList.add('active');
-  if(lang === 'en') {
-    showToast('English UI coming later. / سيتم إضافة واجهة اللغة الإنجليزية لاحقاً');
+  currentUILang = lang;
+  
+  const htmlRoot = document.getElementById('htmlRoot');
+  const headerTitle = document.getElementById('headerTitle');
+  const headerSub = document.getElementById('headerSub');
+  const whatsNewHeading = document.getElementById('whatsNewHeading');
+  const whatsNewContent = document.getElementById('whatsNewContent');
+  const apiKeysHeading = document.getElementById('apiKeysHeading');
+  const subApiKeyTitle = document.getElementById('subApiKeyTitle');
+  const apiKeyHint = document.getElementById('apiKeyHint');
+  const selectModelLabel = document.getElementById('selectModelLabel');
+  const languagesHeading = document.getElementById('languagesHeading');
+  const arabicLangTitle = document.getElementById('arabicLangTitle');
+  const arabicLangDesc = document.getElementById('arabicLangDesc');
+  const arabicLangStatus = document.getElementById('arabicLangStatus');
+  const englishLangTitle = document.getElementById('englishLangTitle');
+  const englishLangDesc = document.getElementById('englishLangDesc');
+  const englishLangProgress = document.getElementById('englishLangProgress');
+  const installConfigHeading = document.getElementById('installConfigHeading');
+  const saveBtnText = document.getElementById('saveBtnText');
+  const installBtnText = document.getElementById('installBtnText');
+  const copyBtnText = document.getElementById('copyBtnText');
+  const footerText = document.getElementById('footerText');
+  const subApiKeyInput = document.getElementById('subApiKeyInput');
+
+  if(lang === 'ar') {
+    htmlRoot.setAttribute('lang', 'ar');
+    htmlRoot.setAttribute('dir', 'rtl');
+    headerTitle.textContent = 'Arabic Fusha Subtitle';
+    headerSub.textContent = 'إضافة Stremio للترجمة السينمائية بالفصحى للأنمي، المسلسلات والأفلام';
+    whatsNewHeading.textContent = 'ما الجديد · What\'s New';
+    whatsNewContent.innerHTML = `
+      <li><strong>معمارية النماذج المتعددة:</strong> دعم كامل لنماذج Pro و Flash و Lite عبر مسارات ديناميكية في الخادم.</li>
+      <li><strong>واجهة اللغة الإنجليزية:</strong> تمت إضافة دعم كامل للغة الإنجليزية في الواجهة.</li>
+      <li><strong>توافق الخادم:</strong> متوافق كلياً مع نظام التوجيه الخاص بـ server.js.</li>
+    `;
+    apiKeysHeading.textContent = 'مفاتيح API · API Keys Configuration';
+    subApiKeyTitle.textContent = 'مفتاح API للترجمة (Subtitle API Key)';
+    subApiKeyInput.placeholder = 'أدخل مفتاح Google Gemini هنا';
+    apiKeyHint.textContent = 'مفتاح Google الخاص بتوليد ملفات الترجمة.';
+    selectModelLabel.textContent = 'اختر نموذج الذكاء الاصطناعي:';
+    languagesHeading.textContent = 'اللغات المدعومة · Languages';
+    arabicLangTitle.textContent = 'العربية الفصحى (Arabic Fusha)';
+    arabicLangDesc.textContent = isArabicSelected ? 'مفعلة وجاهزة لتوليد الترجمة السينمائية' : 'موقف مؤقتاً لن يتم إرسال ترجمة عربية لـ Stremio';
+    arabicLangStatus.textContent = isArabicSelected ? 'محدد (Selected)' : 'غير محدد (Deselected)';
+    englishLangTitle.textContent = 'الإنجليزية (English)';
+    englishLangDesc.textContent = 'قيد التطوير والاختبار حالياً';
+    englishLangProgress.textContent = 'قريباً';
+    installConfigHeading.textContent = 'إجراءات التثبيت · Installation & Config';
+    saveBtnText.textContent = 'حفظ الإعدادات';
+    installBtnText.textContent = 'تثبيت في Stremio';
+    copyBtnText.textContent = 'نسخ رابط التثبيت';
+    footerText.textContent = 'Arabic Fusha Subtitle Addon // Made by Abdullah';
+    showToast('تم تغيير اللغة إلى العربية');
   } else {
-    showToast('تم اختيار الواجهة العربية');
+    htmlRoot.setAttribute('lang', 'en');
+    htmlRoot.setAttribute('dir', 'ltr');
+    headerTitle.textContent = 'Arabic Fusha Subtitle';
+    headerSub.textContent = 'Stremio Addon for Fusha Arabic Cinematic Subtitles for Anime, Series & Movies';
+    whatsNewHeading.textContent = 'What\'s New · ما الجديد';
+    whatsNewContent.innerHTML = `
+      <li><strong>Multi-Model Architecture:</strong> Supports Pro, Flash, and Lite models seamlessly via dynamic manifests.</li>
+      <li><strong>English Interface:</strong> Full interface translation added for English users.</li>
+      <li><strong>Server Pairings:</strong> Fully synchronized with backend server.js routing.</li>
+    `;
+    apiKeysHeading.textContent = 'API Keys Configuration · مفاتيح API';
+    subApiKeyTitle.textContent = 'Subtitle API Key';
+    subApiKeyInput.placeholder = 'Enter your Google Gemini API Key here';
+    apiKeyHint.textContent = 'Google API key required for subtitle generation.';
+    selectModelLabel.textContent = 'Select AI Model:';
+    languagesHeading.textContent = 'Languages · اللغات المدعومة';
+    arabicLangTitle.textContent = 'Arabic Fusha (العربية الفصحى)';
+    arabicLangDesc.textContent = isArabicSelected ? 'Active and ready for cinematic subtitle generation' : 'Temporarily disabled';
+    arabicLangStatus.textContent = isArabicSelected ? 'Selected' : 'Deselected';
+    englishLangTitle.textContent = 'English (الإنجليزية)';
+    englishLangDesc.textContent = 'Under development and testing';
+    englishLangProgress.textContent = 'Soon';
+    installConfigHeading.textContent = 'Installation & Config · إجراءات التثبيت';
+    saveBtnText.textContent = 'Save Settings';
+    installBtnText.textContent = 'Install in Stremio';
+    copyBtnText.textContent = 'Copy Install Link';
+    footerText.textContent = 'Arabic Fusha Subtitle Addon // Made by Abdullah';
+    showToast('Language switched to English');
   }
 }
 
@@ -396,36 +493,38 @@ function toggleArabicSelection() {
     card.classList.remove('deselected');
     card.classList.add('active');
     status.className = 'lang-status status-selected';
-    status.textContent = 'محدد (Selected)';
-    desc.textContent = 'مفعلة وجاهزة لتوليد الترجمة السينمائية';
-    showToast('✓ تمت إعادة تحديد اللغة العربية');
+    status.textContent = currentUILang === 'ar' ? 'محدد (Selected)' : 'Selected';
+    desc.textContent = currentUILang === 'ar' ? 'مفعلة وجاهزة لتوليد الترجمة السينمائية' : 'Active and ready for cinematic subtitle generation';
+    showToast(currentUILang === 'ar' ? 'تمت إعادة تحديد اللغة العربية' : 'Arabic language selected');
   } else {
     card.classList.remove('active');
     card.classList.add('deselected');
     status.className = 'lang-status status-deselected';
-    status.textContent = 'غير محدد (Deselected)';
-    desc.textContent = 'موقف مؤقتاً لن يتم إرسال ترجمة عربية لـ Stremio';
-    showToast('⚠️ تم إلغاء تحديد اللغة العربية');
+    status.textContent = currentUILang === 'ar' ? 'غير محدد (Deselected)' : 'Deselected';
+    desc.textContent = currentUILang === 'ar' ? 'موقف مؤقتاً لن يتم إرسال ترجمة عربية لـ Stremio' : 'Temporarily disabled';
+    showToast(currentUILang === 'ar' ? 'تم إلغاء تحديد اللغة العربية' : 'Arabic language deselected', true);
   }
   updateManifestLink();
 }
 
-function selectModel(group, modelKey, el) {
+function selectModel(modelKey, el) {
   const container = el.parentElement;
   container.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   
-  if(group === 'sub') selectedSubModel = modelKey;
+  selectedSubModel = modelKey;
   updateManifestLink();
-  showToast(`Successfully chose ${el.querySelector('.model-name').innerText}`);
+  showToast(`Successfully selected ${el.querySelector('.model-name').innerText}`);
 }
 
 const aiItems = [
-  { name: 'Gemini 3.6 Pro (Google)', logo: '🔮', color: '#4285F4' },
-  { name: 'Kimi AI', logo: '🌙', color: '#60a5fa' },
-  { name: 'Claude 3.5 Sonnet', logo: '⚡', color: '#f59e0b' },
+  { name: 'Gemini 3.6 Flash (Google)', logo: '⚡', color: '#4285F4' },
+  { name: 'Gemini 3.5 Flash Lite', logo: '🍃', color: '#34A853' },
+  { name: 'Gemini 3.1 Pro', logo: '✨', color: '#FBBC05' },
+  { name: 'Claude 3.5 Sonnet', logo: '🔮', color: '#f59e0b' },
   { name: 'ChatGPT / GPT-4o', logo: '🤖', color: '#34d399' },
-  { name: 'Perplexity Pro', logo: '🔍', color: '#22d3ee' }
+  { name: 'Perplexity Pro', logo: '🔍', color: '#22d3ee' },
+  { name: 'Saturn Addon', logo: '🪐', color: '#f97316' }
 ];
 
 const container = document.getElementById('aiBgContainer');
@@ -433,31 +532,31 @@ function spawnFloatingAI() {
   const item = aiItems[Math.floor(Math.random() * aiItems.length)];
   const el = document.createElement('div');
   el.className = 'floating-ai';
-  el.innerHTML = `<span>${item.logo}</span> <span>${item.name}</span>`;
+  el.innerHTML = `<span style="font-size: 24px;">${item.logo}</span> <span>${item.name}</span>`;
   el.style.color = item.color;
   const startY = Math.random() * (window.innerHeight - 80);
-  const endY = startY + (Math.random() * 320 - 160);
-  const duration = 13 + Math.random() * 7;
+  const endY = startY + (Math.random() * 200 - 100);
+  const duration = 12 + Math.random() * 6;
   el.style.setProperty('--start-y', startY + 'px');
   el.style.setProperty('--end-y', endY + 'px');
   el.style.animationDuration = duration + 's';
   container.appendChild(el);
   setTimeout(() => { el.remove(); }, duration * 1000);
 }
-setInterval(spawnFloatingAI, 1100);
-for(let i=0; i<12; i++) { setTimeout(spawnFloatingAI, i * 220); }
+setInterval(spawnFloatingAI, 1200);
+for(let i=0; i<10; i++) { setTimeout(spawnFloatingAI, i * 250); }
 
 async function validateApiKey(key, statusElementId) {
   const statusEl = document.getElementById(statusElementId);
   if (!key) { statusEl.innerHTML = ''; return; }
-  statusEl.innerHTML = '⏳ Checking...';
+  statusEl.innerHTML = '⏳ Checking API Key...';
   statusEl.style.color = 'var(--g-yellow)';
   try {
      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
-     if (res.ok) { statusEl.innerHTML = '✅ API is Good!'; statusEl.style.color = 'var(--g-green)'; }
-     else { statusEl.innerHTML = '❌ API is Bad! (Rejected by Google)'; statusEl.style.color = 'var(--g-red)'; }
+     if (res.ok) { statusEl.innerHTML = '✅ API Key is Valid!'; statusEl.style.color = 'var(--g-green)'; }
+     else { statusEl.innerHTML = '❌ API Key Invalid (Rejected by Google)'; statusEl.style.color = 'var(--g-red)'; }
   } catch (error) {
-     statusEl.innerHTML = '❌ API is Bad! (Network Error)';
+     statusEl.innerHTML = '❌ Network Error checking API';
      statusEl.style.color = 'var(--g-red)';
   }
 }
@@ -470,6 +569,7 @@ window.onload = () => {
   updateManifestLink();
 };
 
+document.getElementById('subApiKeyInput').value = localStorage.getItem('sub_api_key') || '';
 document.getElementById('subApiKeyInput').addEventListener('input', (e) => {
   localStorage.setItem('sub_api_key', e.target.value.trim());
   updateManifestLink();
@@ -478,7 +578,8 @@ document.getElementById('subApiKeyInput').addEventListener('input', (e) => {
 function getManifestUrl() {
   const subKeyInput = document.getElementById('subApiKeyInput').value.trim();
   const subKey = subKeyInput || 'DEFAULT_SUB_KEY';
-  return `http://127.0.0.1:7000/${subKey}/${subKey}/${selectedSubModel}/manifest.json`;
+  const config = isArabicSelected ? 'arabic-fusha' : 'disabled';
+  return `http://127.0.0.1:7000/${subKey}/${config}/${selectedSubModel}/manifest.json`;
 }
 
 function updateManifestLink() {
@@ -487,18 +588,42 @@ function updateManifestLink() {
   document.getElementById('installBtn').href = stremioUrl;
 }
 
+function checkApiKeyBeforeAction() {
+  const subKeyInput = document.getElementById('subApiKeyInput').value.trim();
+  if (!subKeyInput) {
+    const errorMsg = currentUILang === 'ar' 
+      ? 'يجب إضافة مفتاح Gemini API أولاً حتى تتمكن من النسخ أو التثبيت!' 
+      : 'You must add a Gemini API key before you can download or copy!';
+    showToast(errorMsg, true);
+    return false;
+  }
+  return true;
+}
+
+function handleInstallClick(event) {
+  if (!checkApiKeyBeforeAction()) {
+    event.preventDefault();
+    return false;
+  }
+  return true;
+}
+
 function saveConfig() {
-  localStorage.setItem('sub_api_key', document.getElementById('subApiKeyInput').value.trim());
+  const keyVal = document.getElementById('subApiKeyInput').value.trim();
+  localStorage.setItem('sub_api_key', keyVal);
   const status = document.getElementById('actionStatus');
-  status.textContent = '✓ تم حفظ الإعدادات بنجاح في متصفحك!';
+  status.textContent = currentUILang === 'ar' ? '✓ تم حفظ الإعدادات بنجاح في متصفحك!' : '✓ Settings saved successfully in your browser!';
+  showToast(status.textContent);
   setTimeout(() => { status.textContent = ''; }, 3500);
 }
 
 function copyManifestUrl() {
+  if (!checkApiKeyBeforeAction()) return;
   const url = getManifestUrl();
   navigator.clipboard.writeText(url);
   const status = document.getElementById('actionStatus');
-  status.textContent = '✓ تم نسخ رابط التثبيت إلى الحافظة!';
+  status.textContent = currentUILang === 'ar' ? '✓ تم نسخ رابط التثبيت إلى الحافظة!' : '✓ Install link copied to clipboard!';
+  showToast(status.textContent);
   setTimeout(() => { status.textContent = ''; }, 3500);
 }
 </script>
