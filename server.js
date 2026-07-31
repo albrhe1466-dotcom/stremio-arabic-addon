@@ -21,18 +21,24 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Bulletproof Manifest Route (Matches any path ending in manifest.json)
+// Bulletproof Manifest Route with Unique IDs per Variant
 app.get(/manifest\.json$/, (req, res) => {
     const rawUrl = req.originalUrl.toLowerCase();
     let displayName = "Arabic Fusha (EMBEDDED)";
+    let addonId = "org.arabic.fusha.ai.subtitle.embedded";
     
-    if (rawUrl.includes('lite')) displayName = "Arabic Fusha (LITE)";
-    if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
+    if (rawUrl.includes('lite')) {
+        displayName = "Arabic Fusha (LITE)";
+        addonId = "org.arabic.fusha.ai.subtitle.lite";
+    } else if (rawUrl.includes('flash')) {
+        displayName = "Arabic Fusha (FLASH)";
+        addonId = "org.arabic.fusha.ai.subtitle.flash";
+    }
 
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.json({
-        id: "org.arabic.fusha.ai.subtitle",
+        id: addonId,
         version: "2.2.0",
         name: displayName,
         description: "Your Independent AI Arabic Fusha Subtitles.",
@@ -42,18 +48,18 @@ app.get(/manifest\.json$/, (req, res) => {
     });
 });
 
-// Bulletproof Subtitle Menu Variant (Matches any path containing subtitles)
+// Bulletproof Subtitle Menu Variant
 app.get(/\/subtitles\/.*/, (req, res) => {
     const host = req.get('host');
-    const rawUrl = decodeURIComponent(req.originalUrl);
+    const rawUrl = decodeURIComponent(req.originalUrl).toLowerCase();
     
-    const match = rawUrl.match(/subtitles\/([^/]+)\/([^/]+)/);
-    let rawId = match ? match[2] : 'all';
-    const cleanId = rawId.split('/filename=')[0].split('.json')[0].split('&')[0];
-
     let displayName = "Arabic Fusha (EMBEDDED)";
     if (rawUrl.includes('lite')) displayName = "Arabic Fusha (LITE)";
-    if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
+    else if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
+
+    const match = decodeURIComponent(req.originalUrl).match(/subtitles\/([^/]+)\/([^/]+)/);
+    let rawId = match ? match[2] : 'all';
+    const cleanId = rawId.split('/filename=')[0].split('.json')[0].split('&')[0];
 
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
