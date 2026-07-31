@@ -247,7 +247,7 @@
       <ul class="whats-new-list">
         <li><strong>التوافق العالمي الشامل:</strong> دعم الأنمي، المسلسلات، والأفلام بجميع معرفات Stremio (IMDb, Kitsu, AniDB).</li>
         <li><strong>التحويل المحلي النظيف:</strong> معالجة ذكية وسريعة عبر الخادم المحلي لمنع عرض الرموز الغريبة.</li>
-        <li><strong>نماذج الذكاء الاصطناعي النشطة:</strong> إضافة نموذج <strong>Arabic fusha (Embedded)</strong> الجديد.</li>
+        <li><strong>نماذج الذكاء الاصطناعي النشطة:</strong> دعم كامل لنموذج <strong>Gemini 3.1 Pro</strong> عالي الدقة.</li>
       </ul>
     </div>
   </div>
@@ -286,9 +286,9 @@
               <div class="model-name">Gemini 3.5 Flash Lite</div>
               <div class="model-id">gemini-3.5-flash-lite</div>
             </div>
-            <div class="model-card" data-model="arabic-fusha-embedded" onclick="selectModel('sub', 'arabic-fusha-embedded', this)">
-              <div class="model-name">Arabic fusha (Embedded)</div>
-              <div class="model-id">arabic-fusha-embedded</div>
+            <div class="model-card" data-model="gemini-3.1-pro" onclick="selectModel('sub', 'gemini-3.1-pro', this)">
+              <div class="model-name">Gemini 3.1 Pro</div>
+              <div class="model-id">gemini-3.1-pro</div>
             </div>
           </div>
         </div>
@@ -421,9 +421,9 @@ function selectModel(group, modelKey, el) {
 }
 
 const aiItems = [
-  { name: 'Gemini 3.6 Pro (Google)', logo: '🔮', color: '#4285F4' },
+  { name: 'Gemini 3.1 Pro (Google)', logo: '🔮', color: '#4285F4' },
   { name: 'Kimi AI', logo: '🌙', color: '#60a5fa' },
-  { name: 'Claude 3.5 Sonnet', logo: '⚡', color: '#f59e0b' },
+  { name: 'Claude 5 Sonnet', logo: '⚡', color: '#f59e0b' },
   { name: 'ChatGPT / GPT-4o', logo: '🤖', color: '#34d399' },
   { name: 'Perplexity Pro', logo: '🔍', color: '#22d3ee' }
 ];
@@ -478,7 +478,8 @@ document.getElementById('subApiKeyInput').addEventListener('input', (e) => {
 function getManifestUrl() {
   const subKeyInput = document.getElementById('subApiKeyInput').value.trim();
   const subKey = subKeyInput || 'DEFAULT_SUB_KEY';
-  return `http://127.0.0.1:7000/${subKey}/${subKey}/${selectedSubModel}/manifest.json`;
+  const config = isArabicSelected ? 'enabled' : 'disabled';
+  return `${window.location.origin}/${subKey}/${config}/${selectedSubModel}/manifest.json`;
 }
 
 function updateManifestLink() {
