@@ -579,7 +579,7 @@ function getManifestUrl() {
   const subKeyInput = document.getElementById('subApiKeyInput').value.trim();
   const subKey = subKeyInput || 'DEFAULT_SUB_KEY';
   const config = isArabicSelected ? 'arabic-fusha' : 'disabled';
-  return `http://127.0.0.1:7000/${subKey}/${config}/${selectedSubModel}/manifest.json`;
+  return `${window.location.origin}/${subKey}/${config}/${selectedSubModel}/manifest.json`;
 }
 
 function updateManifestLink() {
