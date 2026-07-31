@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const app = express();
 
 app.use(cors());
@@ -30,9 +29,58 @@ const modelMetadata = {
     }
 };
 
-// 0. Serve the Frontend Website Dashboard at Root
+// 0. Serve the Built-In Frontend Website Dashboard at Root
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic Fusha Subtitles Addon Configuration</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 2.5rem; border-radius: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); width: 100%; max-width: 450px; }
+        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #38bdf8; }
+        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #cbd5e1; }
+        input, select { width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #334155; background: #0f172a; color: #fff; margin-bottom: 1.25rem; font-size: 1rem; box-sizing: border-box; }
+        input:focus, select:focus { outline: none; border-color: #38bdf8; }
+        .btn { display: block; width: 100%; padding: 0.75rem; background: #0284c7; color: white; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; box-sizing: border-box; transition: background 0.2s; }
+        .btn:hover { background: #0369a1; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Arabic Fusha Subtitles</h1>
+        <p>Configure your Gemini AI cinematic translator addon for Stremio.</p>
+        
+        <label for="apiKey">Gemini API Key</label>
+        <input type="password" id="apiKey" placeholder="Paste your AIzaSy... key here">
+        
+        <label for="model">Gemini Model</label>
+        <select id="model">
+            <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
+            <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite</option>
+            <option value="gemini-3.1-pro">Gemini 3.1 Pro</option>
+        </select>
+        
+        <button class="btn" onclick="installAddon()">Install in Stremio</button>
+    </div>
+    <script>
+        function installAddon() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const model = document.getElementById('model').value;
+            if (!apiKey) {
+                alert('Please enter your Gemini API Key first!');
+                return;
+            }
+            const host = window.location.host;
+            const stremioUrl = 'stremio://' + host + '/' + apiKey + '/enabled/' + model + '/manifest.json';
+            window.location.href = stremioUrl;
+        }
+    </script>
+</body>
+</html>`);
 });
 
 // 1. Dynamic Manifest Route
@@ -74,7 +122,7 @@ app.get('/:apiKey/:config/:model/manifest.json', (req, res) => {
     res.json(manifest);
 });
 
-// 2. Subtitles Endpoint (Dynamically uses Railway's public domain & HTTPS)
+// 2. Subtitles Endpoint
 app.get('/:apiKey/:config/:model/subtitles/:type/:id/:extra?.json', async (req, res) => {
     const { apiKey, config, model, type, id } = req.params;
 
@@ -84,8 +132,6 @@ app.get('/:apiKey/:config/:model/subtitles/:type/:id/:extra?.json', async (req, 
 
     try {
         console.log(`[Stremio Subtitle Request] Type: ${type}, ID: ${id}, Model: ${model}`);
-        
-        // Automatically detects if it's local or on Railway (https://your-app.up.railway.app)
         const baseUrl = `${req.protocol}://${req.get('host')}`;
 
         const subtitlesList = [
@@ -129,7 +175,7 @@ CRITICAL INSTRUCTIONS TO PREVENT ERRORS:
             })
         });
 
-    const data = await response.json();
+        const data = await response.json();
 
         if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
             let vttText = data.candidates[0].content.parts[0].text;
@@ -148,7 +194,7 @@ CRITICAL INSTRUCTIONS TO PREVENT ERRORS:
     }
 });
 
-// Bind to 0.0.0.0 so Railway can route traffic to it properly
+// Bind to 0.0.0.0 for Railway
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Live AI Arabic Fusha Subtitle Server running on port ${PORT}`);
 });
