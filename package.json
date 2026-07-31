@@ -1,14 +1,13 @@
 {
-  "name": "arabic-fusha-stremio-addon",
+  "name": "stremio-arabic-addon",
   "version": "2.2.0",
-  "description": "Stremio Addon for AI-powered Classical Arabic subtitles",
+  "description": "Arabic Fusha Stremio Addon",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^16.4.5",
-    "express": "^4.22.2"
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
   }
 }
