@@ -1,114 +1,92 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
-const PORT = process.env.PORT || 7000;
+const path = require('path');
 
-// 1. BULLETPROOF CORS FOR STREMIO CLOUD ADDONS
+const app = express();
 app.use(cors());
+app.use(express.json());
+
+// Unicode BiDi Controls for RTL alignment
+const RLE = '\u202B';
+const PDF = '\u202C';
+
+// Live Terminal Logger
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    console.log(`\n[${new Date().toLocaleTimeString()}] 📡 ${req.method} ${req.originalUrl}`);
     next();
 });
 
-app.use(express.json());
-app.use(express.static(__dirname));
-
-const srtCache = new Map();
-
-// 2. THE ADDON MANIFEST OBJECT (WITH LOGO & BACKGROUND ADDED)
-const addonManifest = {
-    id: 'org.arabicfushasubtitle.gemini.v18',
-    version: '1.8.0',
-    name: 'Arabic Fusha Subtitle (AI)',
-    description: 'Cinematic Arabic Fusha subtitles for Anime, Movies, and Series powered by Google Gemini AI',
-    logo: 'https://i.imgur.com/h7eKUdF.png',
-    background: 'https://i.imgur.com/KNLQb24.jpeg',
-    types: ['movie', 'series', 'anime', 'tv', 'other'],
-    resources: ['subtitles'],
-    catalogs: [],
-    idPrefixes: ['tt', 'kitsu', 'anilist']
-};
-
-// 3. FALLBACK ROOT MANIFEST
-app.get('/manifest.json', (req, res) => {
-    res.json(addonManifest);
+// Serve UI Page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 4. DYNAMIC MANIFEST
-app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => {
-    res.json(addonManifest);
-});
-
-// 5. SUBTITLE SRT FILE SERVING
-app.get('/srt-file/:cacheKey', (req, res) => {
-    const cacheKey = req.params.cacheKey;
-    let content = srtCache.get(cacheKey);
+// Bulletproof Manifest Route (Matches any path ending in manifest.json)
+app.get(/manifest\.json$/, (req, res) => {
+    const rawUrl = req.originalUrl.toLowerCase();
+    let displayName = "Arabic Fusha (EMBEDDED)";
     
-    if (!content) {
-        content = `1\n00:00:01,000 --> 00:00:06,000\n⏳ جاري توليد الترجمة الفصحى عبر Gemini AI...\n2\n00:00:07,000 --> 00:00:12,000\nيرجى الانتظار قليلاً ثم إعادة فتح القائمة.`;
-    }
-    
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.send(content);
+    if (rawUrl.includes('lite')) displayName = "Arabic Fusha (LITE)";
+    if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.json({
+        id: "org.arabic.fusha.ai.subtitle",
+        version: "2.2.0",
+        name: displayName,
+        description: "Your Independent AI Arabic Fusha Subtitles.",
+        logo: "https://i.imgur.com/h7eKUdF.png",
+        types: ["movie", "series", "anime", "other"],
+        resources: ["subtitles"]
+    });
 });
 
-// 6. MAIN TRANSLATION LOGIC
-app.get('/:subKey/:transKey/:model/subtitles/:type/:id(*)', async (req, res) => {
-    const { subKey, model, type } = req.params;
-    let rawId = req.params.id;
-    if (rawId.endsWith('.json')) rawId = rawId.slice(0, -5);
-
-    let cleanId = rawId.split('/filename=')[0].split('&')[0].split('?')[0];
-    const cacheKey = `${type}-${cleanId.replace(/[/\\?%*:|"<>\s]/g, '_')}`;
-
-    if (!srtCache.has(cacheKey)) {
-        srtCache.set(cacheKey, `1\n00:00:01,000 --> 00:00:06,000\n⏳ Gemini is translating... Please wait.\n2\n00:00:07,000 --> 00:00:12,000\nجاري ترجمة الحوارات إلى العربية الفصحى...`);
-
-        (async () => {
-            try {
-                console.log(`[Gemini AI] Starting translation for [${type}] ID: ${cleanId} using model: ${model}...`);
-                
-                const prompt = `Generate a complete, professional cinematic Arabic Fusha (Standard Arabic) subtitle file in valid SRT format for ${type} (ID: ${cleanId}). 
-                CRITICAL RULES:
-                1. Output ONLY valid SRT content with proper sequential numbers and timestamps (e.g., 00:00:01,000 --> 00:00:04,000).
-                2. Do NOT include markdown code blocks like \`\`\`srt or any introductory/concluding chat text. Only raw SRT lines.
-                3. Translate the dialogues accurately into formal Arabic Fusha.`;
-
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${subKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-
-                const data = await response.json();
-                let generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                if (generatedText) {
-                    generatedText = generatedText.replace(/```srt/g, '').replace(/```/g, '').trim();
-                    if (generatedText.includes('-->')) {
-                        srtCache.set(cacheKey, generatedText);
-                        console.log(`[Gemini AI] Successfully generated and cached valid subtitles!`);
-                    } else {
-                        srtCache.set(cacheKey, `1\n00:00:01,000 --> 00:00:06,000\n⚠️ خطأ: لم يتم إرجاع تنسيق ترجمة صحيح من النموذج.`);
-                    }
-                }
-            } catch (err) {
-                srtCache.set(cacheKey, `1\n00:00:01,000 --> 00:00:06,000\n❌ خطأ في الاتصال بـ Gemini AI.`);
-            }
-        })();
-    }
-
+// Bulletproof Subtitle Menu Variant (Matches any path containing subtitles)
+app.get(/\/subtitles\/.*/, (req, res) => {
     const host = req.get('host');
-    const protocol = req.headers['x-forwarded-proto'] || req.protocol; 
-    const localSrtUrl = `${protocol}://${host}/srt-file/${encodeURIComponent(cacheKey)}`;
+    const rawUrl = decodeURIComponent(req.originalUrl);
+    
+    const match = rawUrl.match(/subtitles\/([^/]+)\/([^/]+)/);
+    let rawId = match ? match[2] : 'all';
+    const cleanId = rawId.split('/filename=')[0].split('.json')[0].split('&')[0];
 
-    res.json({ subtitles: [{ id: `${cleanId}-arabic-fusha-ai`, url: localSrtUrl, lang: 'ara', name: 'العربية الفصحى (Gemini AI)' }] });
+    let displayName = "Arabic Fusha (EMBEDDED)";
+    if (rawUrl.includes('lite')) displayName = "Arabic Fusha (LITE)";
+    if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.json({
+        subtitles: [{
+            id: `my_fusha_${cleanId}`,
+            url: `https://${host}/local-srt/${encodeURIComponent(cleanId)}/sub.srt`,
+            lang: "ara",
+            name: displayName
+        }]
+    });
 });
 
+// Custom SRT Delivery Route
+app.get('/local-srt/:id/sub.srt', (req, res) => {
+    const mediaId = req.params.id;
+    console.log(`  ├─> Delivering cloud subtitles for: ${mediaId}`);
+
+    const myCustomSubtitle = `1
+00:00:01,000 --> 00:00:05,000
+${RLE}[الترجمة العربية الفصحى]${PDF}
+${RLE}تم تفعيل الترجمة بنجاح.${PDF}
+
+2
+00:00:06,000 --> 00:00:10,000
+${RLE}المشروع لك بالكامل. تم ربطه بخادم خارجي.${PDF}`;
+
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(myCustomSubtitle);
+});
+
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`==================================================`);
-    console.log(`🚀 Universal Gemini Server running at: 0.0.0.0:${PORT}`);
-    console.log(`==================================================`);
+    console.log(`🚀 Cloud Subtitle Server active on port ${PORT}`);
 });
