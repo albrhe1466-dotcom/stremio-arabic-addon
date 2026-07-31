@@ -1,13 +1,14 @@
 {
-  "name": "arabic-al-fusha-subtitle",
-  "version": "1.4.0",
-  "description": "Arabic al fusha susbtitle addon for Stremio",
+  "name": "arabic-fusha-stremio-addon",
+  "version": "2.2.0",
+  "description": "Stremio Addon for AI-powered Classical Arabic subtitles",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.22.2"
   }
 }

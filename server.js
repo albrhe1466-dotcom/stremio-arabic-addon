@@ -1,75 +1,90 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
-// Automatically binds to Render's web port or defaults to 7000 for local testing
-const PORT = process.env.PORT || 7000;
-
 app.use(cors());
 app.use(express.json());
 
-// Root route to verify the website is live
+// Unicode BiDi Controls to lock RTL rendering in Stremio
+const RLE = '\u202B'; // Right-to-Left Embedding
+const PDF = '\u202C'; // Pop Directional Formatting
+
+// Live Terminal Logger
+app.use((req, res, next) => {
+    console.log(`\n[${new Date().toLocaleTimeString()}] 📡 ${req.method} ${req.originalUrl}`);
+    next();
+});
+
+// Serve UI Page
 app.get('/', (req, res) => {
-  res.send('Arabic al fusha susbtitle (v1.4 beta) is online and running!');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 1. Stremio Manifest Endpoint
-app.get('/:subKey/:transKey/:model/manifest.json', (req, res) => {
-  const { model } = req.params;
-  console.log(`[Manifest Request] Model: ${model}`);
+// Manifest Route
+app.get('*manifest.json', (req, res) => {
+    const rawUrl = req.originalUrl.toLowerCase();
+    let displayName = "Arabic Fusha (EMBEDDED)";
+    
+    if (rawUrl.includes('lite')) displayName = "Arabic Fusha (LITE)";
+    if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
 
-  res.json({
-    id: 'org.arabic.fushasubtitle.beta14',
-    version: '1.4 beta',
-    name: 'Arabic al fusha susbtitle',
-    description: 'Cinematic AI-powered Arabic Fusha subtitles for Stremio',
-    logo: 'https://imgur.com/a/IhONi5z',         // Replace with direct image link if needed (.png/.jpg)
-    background: 'https://imgur.com/a/W5qVFdb', // Replace with direct image link if needed (.png/.jpg)
-    resources: ['subtitles'],
-    types: ['movie', 'series'],
-    idPrefixes: ['tt']
-  });
+    res.setHeader('Content-Type', 'application/json');
+    res.json({
+        id: "org.arabic.fusha.ai.subtitle",
+        version: "2.2.0",
+        name: displayName,
+        description: "Your Independent AI Arabic Fusha Subtitles.",
+        logo: "https://i.imgur.com/h7eKUdF.png",
+        types: ["movie", "series", "anime", "other"],
+        resources: ["subtitles"]
+    });
 });
 
-// 2. Stremio Subtitles Endpoint
-app.get('/:subKey/:transKey/:model/subtitles/:type/:id.json', (req, res) => {
-  const { type, id } = req.params;
-  console.log(`[Subtitles Requested] Type: ${type} | ID: ${id}`);
+// Subtitle Menu Variant
+app.get('*subtitles*', (req, res) => {
+    const host = req.get('host') || '127.0.0.1:7000';
+    const rawUrl = decodeURIComponent(req.originalUrl);
+    
+    const match = rawUrl.match(/subtitles\/([^/]+)\/([^/]+)/);
+    const type = match ? match[1] : 'series';
+    let rawId = match ? match[2] : 'all';
+    const cleanId = rawId.split('/filename=')[0].split('.json')[0].split('&')[0];
 
-  const host = req.get('host');
-  // Dynamically uses HTTPS for cloud websites (Render) and HTTP locally
-  const protocol = req.headers['x-forwarded-proto'] || 'http';
-  const sampleVttUrl = `${protocol}://${host}/vtt/${id}.vtt`;
+    let displayName = "Arabic Fusha (EMBEDDED)";
+    if (rawUrl.includes('lite')) displayName = "Arabic Fusha (LITE)";
+    if (rawUrl.includes('flash')) displayName = "Arabic Fusha (FLASH)";
 
-  res.json({
-    subtitles: [
-      {
-        id: `fusha_ai_${id}`,
-        url: sampleVttUrl,
-        lang: 'ara' // Mandatory code for the Arabic subtitle variant dropdown menu
-      }
-    ]
-  });
+    res.setHeader('Content-Type', 'application/json');
+    res.json({
+        subtitles: [{
+            id: `my_fusha_${cleanId}`,
+            url: `http://${host}/local-srt/${encodeURIComponent(cleanId)}/sub.srt`,
+            lang: "ara",
+            name: displayName
+        }]
+    });
 });
 
-// 3. Serve the Test Subtitle VTT File
-app.get('/vtt/:id.vtt', (req, res) => {
-  const { id } = req.params;
-  console.log(`[VTT File Served] ID: ${id}`);
+// Custom SRT Delivery Route with Strict BiDi Enforcement
+app.get('/local-srt/:id/sub.srt', (req, res) => {
+    const mediaId = req.params.id;
+    console.log(`  ├─> Delivering BiDi-locked subtitles for: ${mediaId}`);
 
-  res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
-  res.send(`WEBVTT - Arabic al fusha susbtitle v1.4 beta
-
-1
-00:00:01.000 --> 00:00:06.000
-أهلاً بك! تعمل إضافة Arabic al fusha susbtitle (v1.4 beta) بنجاح تامة.
+    const myCustomSubtitle = `1
+00:00:01,000 --> 00:00:05,000
+${RLE}[الترجمة العربية الفصحى]${PDF}
+${RLE}تم تفعيل الترجمة بنجاح.${PDF}
 
 2
-00:00:06.500 --> 00:00:12.000
-النظام متصل عبر الموقع الإلكتروني وتظهر الترجمة ضمن خيارات المتغيرات!
-`);
+00:00:06,000 --> 00:00:10,000
+${RLE}المشروع لك بالكامل. لا توجد خوادم خارجية.${PDF}`;
+
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.send(myCustomSubtitle);
 });
 
+const PORT = 7000;
 app.listen(PORT, () => {
-  console.log(`🚀 Arabic al fusha susbtitle server running on port ${PORT}`);
+    console.log(`🚀 Independent Subtitle Server active at http://localhost:${PORT}`);
 });
