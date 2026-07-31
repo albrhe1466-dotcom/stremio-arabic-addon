@@ -1,7 +1,7 @@
 {
-  "name": "arabic-fusha-subtitles",
+  "name": "stremio-arabic-addon",
   "version": "2.2.0",
-  "description": "Independent Stremio Subtitle Server",
+  "description": "Arabic Fusha Stremio Addon",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
