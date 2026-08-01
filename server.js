@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  * ARABIC FUSHA SUBTITLES STREMIO ADDON - SERVER CORE
- * Version: 3.0.1
+ * Version: 3.0.2
  * Author: Abdullah
  * ============================================================================
  */
@@ -42,7 +42,7 @@ function decodeKey(rawKey) {
 }
 
 // ----------------------------------------------------------------------------
-// STREMIO MANIFEST ROUTE (VERSION 3.0.1)
+// STREMIO MANIFEST ROUTE (VERSION 3.0.2)
 // ----------------------------------------------------------------------------
 app.get('/:apiKey/manifest.json', (req, res) => {
     try {
@@ -53,7 +53,7 @@ app.get('/:apiKey/manifest.json', (req, res) => {
 
         const addonManifest = {
             id: "org.arabic.fusha.subtitles",
-            version: "3.0.1",
+            version: "3.0.2",
             name: `Arabic Fusha AI Subtitles (${selectedModel})`,
             description: `Cinematic Literary Arabic (Fusha) subtitles generated dynamically via Google Gemini (${selectedModel}) for movies, series, and anime.`,
             types: ["movie", "series", "anime"],
@@ -81,7 +81,7 @@ app.get('/:apiKey/manifest.json', (req, res) => {
 });
 
 // ----------------------------------------------------------------------------
-// STREMIO SUBTITLES MENU ROUTE (INVISIBLE OPENSUBTITLES V3 BACKEND SYNC)
+// STREMIO SUBTITLES MENU ROUTE (ROBUST ABSOLUTE URL & PROTOCOL FALLBACK)
 // ----------------------------------------------------------------------------
 app.get('/:apiKey/subtitles/:type/:id/:extra?.json', async (req, res) => {
     try {
@@ -103,10 +103,17 @@ app.get('/:apiKey/subtitles/:type/:id/:extra?.json', async (req, res) => {
             console.log(`[OpenSubtitles V3 Background Sync] Using stream metadata context fallback.`);
         }
 
+        // Dynamically resolve protocol and host for Render / production vs local environment
+        const hostHeader = req.get('host') || `localhost:${PORT}`;
+        const protocolHeader = req.get('x-forwarded-proto') || (req.secure ? 'https' : 'http');
+        const absoluteBaseUrl = `${protocolHeader}://${hostHeader}`;
+
+        const subtitleTargetUrl = `${absoluteBaseUrl}/translate.vtt?key=${encodeURIComponent(rawApiKey)}&model=${selectedModel}&id=${encodeURIComponent(id)}&context=${encodeURIComponent(baseSourceContext)}&extra=${encodeURIComponent(extra || '')}`;
+
         const subtitlesPayload = [
             {
                 id: `arabic-fusha-${selectedModel}-${id}`,
-                url: `http://localhost:${PORT}/translate.vtt?key=${encodeURIComponent(rawApiKey)}&model=${selectedModel}&id=${encodeURIComponent(id)}&context=${encodeURIComponent(baseSourceContext)}&extra=${encodeURIComponent(extra || '')}`,
+                url: subtitleTargetUrl,
                 lang: "ara",
                 language: "Arabic",
                 name: `Arabic Fusha (${selectedModel})`
@@ -115,6 +122,7 @@ app.get('/:apiKey/subtitles/:type/:id/:extra?.json', async (req, res) => {
 
         return res.json({ subtitles: subtitlesPayload });
     } catch (error) {
+        console.error(`[Stremio Menu Error]:`, error.message);
         return res.status(200).json({ subtitles: [] });
     }
 });
@@ -202,7 +210,7 @@ Return ONLY valid WebVTT format starting with "WEBVTT". No markdown blocks, no c
 
 app.listen(PORT, () => {
     console.log('============================================================');
-    console.log(`🚀 Arabic Fusha Subtitles Addon Server v3.0.1 is running!`);
+    console.log(`🚀 Arabic Fusha Subtitles Addon Server v3.0.2 is running!`);
     console.log(`📍 Local URL: http://localhost:${PORT}`);
     console.log(`👤 Created by: Abdullah`);
     console.log('============================================================');
